@@ -11,6 +11,5 @@ python-jose[cryptography]
 cloudinary
 python-multipart
 httpx
-
-
-
+weasyprint
+fpdf

@@ -2,12 +2,22 @@ FROM python:3.13-alpine
 
 WORKDIR /app
 
+RUN apk add --no-cache \
+    build-base \
+    cairo-dev \
+    pango-dev \
+    gdk-pixbuf-dev \
+    libffi-dev \
+    libxml2-dev \
+    libxslt-dev \
+    jpeg-dev \
+    zlib-dev \
+    musl-dev \
+    py3-pip \
+    ttf-dejavu  # ✅ גופנים שנדרשים ל־WeasyPrint
 
-RUN pip install fastapi uvicorn sqlalchemy psycopg2-binary python-dotenv pydantic[email] passlib[bcrypt]  bcrypt python-jose[cryptography] cloudinary python-multipart httpx
-
-
-
-
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 

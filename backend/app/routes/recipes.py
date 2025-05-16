@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends, Query, Form
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, Depends, Query, Form, BackgroundTasks
+from sqlalchemy.orm import Session, joinedload
 from app.db.database import get_db
 from app import models
 from app.models import User, Rating, Recipe
@@ -11,6 +11,7 @@ from app.services.cloudinary_service import upload_image_to_cloudinary
 from datetime import datetime
 from typing import Optional
 from uuid import uuid4
+from app.services.email import send_recipe_email_with_pdf
 
 router = APIRouter(prefix="/recipes", tags=["recipes"])
 
@@ -400,5 +401,21 @@ def get_shared_recipe(token: str, db: Session = Depends(get_db)):
         "share_token": str(recipe.share_token),
         "creator_name": recipe.creator.username if recipe.creator else "Unknown"
     }
+
+
+@router.post("/recipes/share/send")
+def send_recipe_via_email(
+    recipe_id: int,
+    email: str,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
+    recipe = (db.query(Recipe).options(joinedload(Recipe.creator)).filter(Recipe.id == recipe_id, Recipe.is_public == True).first()
+)
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    background_tasks.add_task(send_recipe_email_with_pdf, email, recipe)
+    return {"message": "Email is being sent"}
 
 
