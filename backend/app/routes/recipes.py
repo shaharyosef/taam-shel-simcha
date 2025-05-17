@@ -222,7 +222,7 @@ def get_all_recipes_admin(
             created_at = recipe.created_at.isoformat() if recipe.created_at else None,
         ))
 
-        return response
+    return response
     
 
 @router.delete("/admin/recipes/{recipe_id}")
@@ -461,7 +461,17 @@ def get_recent_recipes(page: int = 1, db: Session = Depends(get_db)):
 @router.get("/recipes/sorted/favorited")
 def get_most_favorited_recipes(page: int = 1, db: Session = Depends(get_db)):
     recipes = recipe_services.get_most_favorited_recipes(db)
+    
+    if not recipes:
+        # אם אין מתכונים מועדפים, ניקח את המדורגים ביותר
+        recipes = recipe_services.get_top_rated_recipes(db)
+
     total = len(recipes)
     paginated = recipes[(page - 1) * PAGE_SIZE : page * PAGE_SIZE]
     total_pages = (total + PAGE_SIZE - 1) // PAGE_SIZE
-    return {"recipes": paginated, "total_pages": total_pages, "current_page": page}
+
+    return {
+        "recipes": paginated,
+        "total_pages": total_pages,
+        "current_page": page
+    }
