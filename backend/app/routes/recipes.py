@@ -13,6 +13,7 @@ from typing import Optional
 from uuid import uuid4
 from app.services.email import send_recipe_email_with_pdf, send_rating_notification_email
 from app.services import recipe_services
+import random
 
 PAGE_SIZE = 8
 
@@ -475,3 +476,37 @@ def get_most_favorited_recipes(page: int = 1, db: Session = Depends(get_db)):
         "total_pages": total_pages,
         "current_page": page
     }
+
+
+@router.get("/public-random", response_model=list[RecipeResponse])
+def get_random_public_recipes(db: Session = Depends(get_db)):
+    all_public = (
+        db.query(Recipe)
+        .options(joinedload(Recipe.creator))
+        .filter(Recipe.is_public == True)
+        .all()
+    )
+
+    random_recipes = random.sample(all_public, min(len(all_public), 8))
+
+    results = []
+    for r in random_recipes:
+        avg_rating = db.query(func.avg(Rating.rating)).filter(Rating.recipe_id == r.id).scalar()
+        results.append(
+            RecipeResponse(
+                id=r.id,
+                title=r.title,
+                description=r.description,
+                ingredients=r.ingredients,
+                instructions=r.instructions,
+                image_url=r.image_url,
+                video_url=r.video_url,
+                created_at=r.created_at.isoformat() if r.created_at else None,
+                creator_name=r.creator.username if r.creator else "לא ידוע",
+                share_token=r.share_token,
+                is_public=r.is_public,
+                average_rating=round(avg_rating, 2) if avg_rating else None  # ⬅️ זה השדה החדש
+            )
+        )
+
+    return results

@@ -4,6 +4,7 @@ from app.models import Base
 from app.routes import users, favorites, recipes, comments, ai
 from contextlib import asynccontextmanager
 from fastapi.openapi.utils import get_openapi  # ✅ חדש
+from fastapi.middleware.cors import CORSMiddleware
 
 
 @asynccontextmanager
@@ -22,6 +23,16 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # או רשימה כמו ["http://localhost:3000"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 # ✅ הוספת הראוטים
 app.include_router(users.router)

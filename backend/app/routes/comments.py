@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.db.database import get_db
 from app.models import Comment, Recipe, User
 from app.schemas.comment_schema import CommentCreate, CommentResponse
@@ -33,7 +33,13 @@ def add_comment(recipe_id: int, comment: CommentCreate, db: Session = Depends(ge
 
 @router.get("/{recipe_id}", response_model=list[CommentResponse])
 def get_comments(recipe_id: int, db: Session = Depends(get_db)):
-    comments = db.query(Comment).filter(Comment.recipe_id == recipe_id).all()
+    comments = (
+        db.query(Comment)
+        .options(joinedload(Comment.user))
+        .filter(Comment.recipe_id == recipe_id)
+        .order_by(Comment.created_at.desc())
+        .all()
+    )
     return [
         CommentResponse(
             id=c.id,

@@ -28,6 +28,7 @@ class RecipeResponse(BaseModel):
     creator_name: str  # 🟢 שם המפרסם – חובה
     share_token: UUID  # והוא מסוג UUID
     is_public: bool
+    average_rating: Optional[float] = None
 
     
 
@@ -45,7 +46,8 @@ class RecipeUpdate(BaseModel):
     video_url: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
 
 class RecipeAdminUpdate(BaseModel):
     title: Optional[str]
