@@ -10,6 +10,7 @@ import PublicRecipesPage from "./pages/PublicRecipesPage";
 import AiRecipePage from "./pages/AiRecipePage";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 import "./css/App.css";
 import "./index.css";
@@ -51,6 +52,7 @@ function App() {
             <Route element={<GuestLayout />}>
               <Route path="/" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/public-recipes" element={<PublicRecipesPage />} />
             </Route>
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../services/authService";
 import { useNavigate } from "react-router-dom";
-import "../css/RegisterPage.css"; // נוודא שהקובץ קיים
+import "../css/RegisterPage.css";
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -62,8 +62,11 @@ function RegisterPage() {
             onChange={handleChange}
             required
           />
+
           {error && <p className="error">{error}</p>}
-          <button type="submit">צור חשבון</button>
+
+          <button type="submit" className="main-login-button">צור חשבון</button>
+
         </form>
       </div>
     </div>

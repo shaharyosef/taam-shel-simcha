@@ -4,12 +4,11 @@
   align-items: center;
   height: 100vh;
   background-color: #f5f5f5;
-
-
+  direction: rtl;
 }
 
 .login-card {
-  background-color: #fdf6f0;;
+  background-color: #fdf6f0;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -20,7 +19,7 @@
 
 .login-card h2 {
   margin-bottom: 1.5rem;
-  color: #000000;
+  color: #000;
 }
 
 .login-card input {
@@ -32,33 +31,52 @@
   font-size: 1rem;
 }
 
-.login-card button {
-  width: 20%;
-  padding: 0.75rem;
+/* כפתור התחברות ראשי */
+.main-login-button {
+  width: 100%;
+  height: 48px;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  font-weight: bold;
   background-color: #e0d2c0;
+  color: #333;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.login-card button:hover {
-  background-color: #e0e0e0;
+.main-login-button:hover {
+  background-color: #d4c4b2;
 }
 
-.register-link {
+/* שני כפתורים מתחת – שכחתי סיסמה + הרשמה */
+.login-sub-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
   margin-top: 1rem;
+}
+
+.sub-button {
+  flex: 1;
+  height: 42px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   font-size: 0.9rem;
-    color: #000000;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sub-button:hover {
+  background-color: #e0e0e0;
 }
 
 .error {
   color: red;
   margin-bottom: 1rem;
-}
-
-
-.login-submit-button {
-    color: black;
+  font-size: 0.9rem;
 }

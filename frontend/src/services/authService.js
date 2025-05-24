@@ -30,3 +30,9 @@ axios.interceptors.request.use((config) => {
   }
   return config;
 });
+
+
+export async function requestPasswordReset(email) {
+  const res = await axios.post(`${API_URL}/auth/forgot-password`, { email });
+  return res.data;
+}

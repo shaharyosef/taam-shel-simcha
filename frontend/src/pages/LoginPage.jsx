@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
-import { useAuth } from "../context/AuthContext"; // ✅ נכון
-     // נכון
- // נכון
-
+import { useAuth } from "../context/AuthContext";
 import "../css/LoginPage.css";
 
 function LoginPage() {
@@ -31,16 +28,50 @@ function LoginPage() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
+    <div className="auth-container">
+      <div className="auth-card">
         <h2>התחברות</h2>
         <form onSubmit={handleSubmit}>
-          <input type="email" name="email" placeholder="אימייל" value={formData.email} onChange={handleChange} required />
-          <input type="password" name="password" placeholder="סיסמה" value={formData.password} onChange={handleChange} required />
+          <input
+            type="email"
+            name="email"
+            placeholder="אימייל"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="סיסמה"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+
           {error && <p className="error">{error}</p>}
-          <button type="submit">התחבר</button>
+
+          {/* 🔵 כפתור התחברות ראשי */}
+          <button type="submit" className="main-login-button">התחבר</button>
+
+          {/* 🔸 שני כפתורים קטנים מתחת */}
+          <div className="login-sub-buttons">
+            <button
+              type="button"
+              className="sub-button"
+              onClick={() => navigate("/register")}
+            >
+              הרשמה
+            </button>
+            <button
+              type="button"
+              className="sub-button"
+              onClick={() => navigate("/forgot-password")}
+            >
+              שכחתי סיסמה
+            </button>
+          </div>
         </form>
-        <p className="register-link">אין לך חשבון? <a href="/register">להרשמה</a></p>
       </div>
     </div>
   );
