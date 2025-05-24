@@ -19,6 +19,8 @@ PAGE_SIZE = 8
 
 router = APIRouter(prefix="/recipes", tags=["recipes"])
 
+
+
 @router.get("/", response_model=list[RecipeResponse])
 def get_all_recipes(db: Session = Depends(get_db)):
     recipes = db.query(models.Recipe).filter(models.Recipe.is_public == True).all()
@@ -415,7 +417,7 @@ def get_shared_recipe(token: str, db: Session = Depends(get_db)):
     }
 
 
-@router.post("/recipes/share/send")
+@router.post("/share/send")
 def send_recipe_via_email(
     recipe_id: int,
     email: str,
@@ -432,50 +434,135 @@ def send_recipe_via_email(
 
 
 
-@router.get("/recipes/sorted/top-rated")
+@router.get("/sorted/top-rated")
 def get_top_rated_recipes(page: int = 1, db: Session = Depends(get_db)):
     recipes = recipe_services.get_top_rated_recipes(db)
     total = len(recipes)
     paginated = recipes[(page - 1) * PAGE_SIZE : page * PAGE_SIZE]
     total_pages = (total + PAGE_SIZE - 1) // PAGE_SIZE
-    return {"recipes": paginated, "total_pages": total_pages, "current_page": page}
+
+    results = []
+    for r in paginated:
+        avg_rating = db.query(func.avg(Rating.rating)).filter(Rating.recipe_id == r.id).scalar()
+        results.append(RecipeResponse(
+            id=r.id,
+            title=r.title,
+            description=r.description,
+            ingredients=r.ingredients,
+            instructions=r.instructions,
+            image_url=r.image_url,
+            video_url=r.video_url,
+            created_at=r.created_at.isoformat() if r.created_at else None,
+            creator_name=r.creator.username if r.creator else "לא ידוע",
+            share_token=r.share_token,
+            is_public=r.is_public,
+            average_rating=round(avg_rating, 2) if avg_rating else None
+        ))
+
+    return {"recipes": results, "total_pages": total_pages, "current_page": page}
 
 
-@router.get("/recipes/sorted/random")
+@router.get("/sorted/random")
 def get_random_recipes(page: int = 1, db: Session = Depends(get_db)):
-    recipes = recipe_services.get_random_recipes(db)
+    recipes = (
+        db.query(Recipe)
+        .filter(Recipe.is_public == True)
+        .options(joinedload(Recipe.creator))
+        .all()
+    )
+    random.shuffle(recipes)
     total = len(recipes)
     paginated = recipes[(page - 1) * PAGE_SIZE : page * PAGE_SIZE]
     total_pages = (total + PAGE_SIZE - 1) // PAGE_SIZE
-    return {"recipes": paginated, "total_pages": total_pages, "current_page": page}
+
+    results = []
+    for r in paginated:
+        avg_rating = db.query(func.avg(Rating.rating)).filter(Rating.recipe_id == r.id).scalar()
+        results.append(RecipeResponse(
+            id=r.id,
+            title=r.title,
+            description=r.description,
+            ingredients=r.ingredients,
+            instructions=r.instructions,
+            image_url=r.image_url,
+            video_url=r.video_url,
+            created_at=r.created_at.isoformat() if r.created_at else None,
+            creator_name=r.creator.username if r.creator else "לא ידוע",
+            share_token=r.share_token,
+            is_public=r.is_public,
+            average_rating=round(avg_rating, 2) if avg_rating else None
+        ))
+
+    return {"recipes": results, "total_pages": total_pages, "current_page": page}
 
 
-@router.get("/recipes/sorted/recent")
+@router.get("/sorted/recent")
 def get_recent_recipes(page: int = 1, db: Session = Depends(get_db)):
-    recipes = recipe_services.get_most_recent_recipes(db)
+    recipes = (
+        db.query(Recipe)
+        .filter(Recipe.is_public == True)
+        .options(joinedload(Recipe.creator))
+        .order_by(Recipe.created_at.desc())
+        .all()
+    )
+
     total = len(recipes)
     paginated = recipes[(page - 1) * PAGE_SIZE : page * PAGE_SIZE]
     total_pages = (total + PAGE_SIZE - 1) // PAGE_SIZE
-    return {"recipes": paginated, "total_pages": total_pages, "current_page": page}
+
+    results = []
+    for r in paginated:
+        avg_rating = db.query(func.avg(Rating.rating)).filter(Rating.recipe_id == r.id).scalar()
+        results.append(RecipeResponse(
+            id=r.id,
+            title=r.title,
+            description=r.description,
+            ingredients=r.ingredients,
+            instructions=r.instructions,
+            image_url=r.image_url,
+            video_url=r.video_url,
+            created_at=r.created_at.isoformat() if r.created_at else None,
+            creator_name=r.creator.username if r.creator else "לא ידוע",
+            share_token=r.share_token,
+            is_public=r.is_public,
+            average_rating=round(avg_rating, 2) if avg_rating else None
+        ))
+
+    return {"recipes": results, "total_pages": total_pages, "current_page": page}
 
 
-@router.get("/recipes/sorted/favorited")
+
+@router.get("/sorted/favorited")
 def get_most_favorited_recipes(page: int = 1, db: Session = Depends(get_db)):
     recipes = recipe_services.get_most_favorited_recipes(db)
-    
+
     if not recipes:
-        # אם אין מתכונים מועדפים, ניקח את המדורגים ביותר
         recipes = recipe_services.get_top_rated_recipes(db)
 
     total = len(recipes)
     paginated = recipes[(page - 1) * PAGE_SIZE : page * PAGE_SIZE]
     total_pages = (total + PAGE_SIZE - 1) // PAGE_SIZE
 
-    return {
-        "recipes": paginated,
-        "total_pages": total_pages,
-        "current_page": page
-    }
+    results = []
+    for r in paginated:
+        avg_rating = db.query(func.avg(Rating.rating)).filter(Rating.recipe_id == r.id).scalar()
+        results.append(RecipeResponse(
+            id=r.id,
+            title=r.title,
+            description=r.description,
+            ingredients=r.ingredients,
+            instructions=r.instructions,
+            image_url=r.image_url,
+            video_url=r.video_url,
+            created_at=r.created_at.isoformat() if r.created_at else None,
+            creator_name=r.creator.username if r.creator else "לא ידוע",
+            share_token=r.share_token,
+            is_public=r.is_public,
+            average_rating=round(avg_rating, 2) if avg_rating else None
+        ))
+
+    return {"recipes": results, "total_pages": total_pages, "current_page": page}
+
 
 
 @router.get("/public-random", response_model=list[RecipeResponse])
