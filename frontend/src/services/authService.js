@@ -1,3 +1,5 @@
+// src/services/authService.js
+
 import axios from "axios";
 
 const API_URL =
@@ -10,6 +12,17 @@ export async function loginUser(email, password) {
   return res.data;
 }
 
+// ✅ הוסף את זה:
+export async function registerUser(username, email, password) {
+  const res = await axios.post(`${API_URL}/auth/signup`, {
+    username,
+    email,
+    password,
+  });
+  return res.data;
+}
+
+// מוסיף את הטוקן לכל בקשה באופן אוטומטי
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
