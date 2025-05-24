@@ -1,0 +1,120 @@
+.public-recipes-page {
+  padding: 2rem;
+  
+  text-align: center;
+  direction: rtl;
+  background-color: #f5f5f5;
+
+}
+
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.2rem;
+  justify-content: center;
+  max-width: 920px; /* או פחות, תלוי בגודל הכרטיסים */
+  margin: 0 auto;
+}
+
+
+
+.recipe-card {
+  width: 380px;
+  height: 380px;
+  background-color: #fdf6f0;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  direction: rtl;
+  position: relative;
+}
+
+.recipe-image {
+  width: 100%;
+  height: 100%; /* אפשר גם יותר */
+  object-fit: contain;
+  object-position: center;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+
+.recipe-card:hover {
+  transform: scale(1.03);
+}
+
+.recipe-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
+.rating-row {
+  position: absolute;
+  top: 0rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #f9f9f9;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.rating-number {
+  font-weight: bold;
+  color: #333;
+}
+
+.stars svg {
+  vertical-align: middle;
+  font-size: 1rem;
+}
+
+.recipe-card  {
+  width: 190px;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
+.rating-box {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: gold;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.description-block {
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+.description-block strong {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+  color: #555;
+}
+
+.description {
+  font-size: 0.85rem;
+  color: #333;
+  line-height: 1.3;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* מספר שורות */
+  line-clamp: 3; /* מספר שורות */
+  -webkit-box-orient: vertical;
+}

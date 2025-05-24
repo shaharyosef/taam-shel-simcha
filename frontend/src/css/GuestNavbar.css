@@ -1,0 +1,84 @@
+/* סגנון כללי ל-navbar */
+.guest-navbar {
+  background-color: #fdf6f0; /* שמנת/ורדרד בהיר – תואם לאווירה חמה */
+  border-bottom: 1px solid #e0d2c0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.5rem;
+  font-family: Arial, sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+
+/* הלוגו – אפילו אם הוא ריק */
+.guest-navbar-logo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 120px; /* כדי לא להידחק ע"י האייקון הקבוע */
+}
+
+/* רשימת הכפתורים */
+.guest-navbar-links {
+  list-style: none;
+  display: flex;
+ gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+}
+
+/* כפתור עם אייקון וטקסט */
+.nav-icon-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #333;
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  background-color: #f0f0f0;
+  transition: background-color 0.2s, transform 0.2s;
+  width: 90px;
+  background-color: transparent;
+}
+
+.nav-icon-button:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.05);
+}
+
+/* תמונת האייקון */
+.nav-icon-img {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 0.1rem;
+  object-fit: contain;
+}
+
+/* הטקסט שמתחת לאייקון */
+.nav-icon-label {
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: -2px;
+}
+
+
+.nav-login-button {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+  border: none;
+  background-color: transparent;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.nav-login-button:hover {
+  color: #0056b3;
+}
+
+
