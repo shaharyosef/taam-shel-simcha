@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
-import { getSortedRecipes, addToFavorites, removeFromFavorites, getFavorites, rateRecipe } from "../services/recipeService";
+import {
+  getSortedRecipes,
+  addToFavorites,
+  removeFromFavorites,
+  getFavorites,
+  rateRecipe,
+} from "../services/recipeService";
 import { Recipe } from "../types/Recipe";
 import StarRating from "../components/StarRating";
+import RecipeShareButton from "../components/RecipeShareButton";
+import { Link } from "react-router-dom";
 
 const SORT_OPTIONS = [
   { value: "top-rated", label: "📈 הכי מדורגים" },
@@ -16,21 +24,18 @@ export default function AllPublicRecipesPage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
 
-useEffect(() => {
-  async function fetchFavorites() {
-    try {
-      const favIds = await getFavorites(); // מחזיר מזהי מתכונים שהמשתמש סימן
-      console.log("מועדפים מהשרת:", favIds);
-      setFavorites(favIds);
-    } catch (err) {
-      console.error("שגיאה בטעינת מועדפים:", err);
+  useEffect(() => {
+    async function fetchFavorites() {
+      try {
+        const favIds = await getFavorites();
+        setFavorites(favIds);
+      } catch (err) {
+        console.error("שגיאה בטעינת מועדפים:", err);
+      }
     }
-  }
 
-  fetchFavorites();
-}, []);
-
-
+    fetchFavorites();
+  }, []);
 
   useEffect(() => {
     async function fetchRecipes() {
@@ -61,7 +66,7 @@ useEffect(() => {
 
   return (
     <div className="p-4 text-right" dir="rtl">
-      {/* כפתור מיון - פינה ימנית עליונה */}
+      {/* כפתור מיון */}
       <div className="flex justify-start">
         <div className="ml-auto relative">
           <button
@@ -94,41 +99,54 @@ useEffect(() => {
       {/* כרטיסי מתכונים */}
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {recipes.map((recipe) => (
-          <div
+          <Link
+            to={`/recipes/${recipe.id}`}
             key={recipe.id}
-            className="bg-white shadow rounded p-4 relative text-right"
+            className="bg-white shadow rounded p-4 relative text-right hover:shadow-lg transition block"
           >
-            {/* דירוג */}
+            {/* דירוג ממוצע */}
             <div className="absolute top-2 right-2 bg-yellow-400 text-white px-2 py-1 rounded-md text-xs font-bold shadow">
-              ⭐ {recipe.average_rating !== undefined ? recipe.average_rating.toFixed(1) : "אין דירוג"}
+              ⭐ {recipe.average_rating != null ? recipe.average_rating.toFixed(1) : "אין דירוג"}
+
+            </div>
+
+            {/* כפתורי לב ושיתוף – מונעים ניווט בעת לחיצה */}
+            <div
+              onClick={(e) => e.preventDefault()}
+              className="absolute top-2 left-2 flex gap-2 items-center z-10"
+            >
+              <button
+                onClick={() => toggleFavorite(recipe.id)}
+                className="text-2xl hover:scale-110 transition-transform"
+                title="הוסף למועדפים"
+              >
+                {favorites.includes(recipe.id) ? "❤️" : "🤍"}
+              </button>
+              <RecipeShareButton recipeId={recipe.id} title={recipe.title} />
             </div>
 
             {/* דירוג על ידי המשתמש */}
-            <div className="mt-2">
-                <StarRating onRate={async (rating) => {
-                    try {
-                        await rateRecipe(recipe.id, rating);
-                        alert("תודה על הדירוג!");
-                    } catch (err) {
-                        console.error("שגיאה בשליחת דירוג:", err);
-                        alert("הייתה שגיאה בשליחת הדירוג.");
-                    }
-        }} />
-    </div>
-
-
-            {/* כפתור לב */}
-            <button
-              onClick={() => toggleFavorite(recipe.id)}
-              className="absolute top-2 left-2 text-2xl hover:scale-110 transition-transform"
-              title="הוסף למועדפים"
-            >
-              {favorites.includes(recipe.id) ? "❤️" : "🤍"}
-            </button>
+            <div onClick={(e) => e.preventDefault()} className="mt-2">
+              <StarRating
+                onRate={async (rating) => {
+                  try {
+                    await rateRecipe(recipe.id, rating);
+                    alert("תודה על הדירוג!");
+                  } catch (err) {
+                    console.error("שגיאה בשליחת דירוג:", err);
+                    alert("הייתה שגיאה בשליחת הדירוג.");
+                  }
+                }}
+              />
+            </div>
 
             {/* תמונה */}
             <img
-              src={recipe.image_url?.trim() ? recipe.image_url : "/images/no_pic.png"}
+              src={
+                recipe.image_url?.trim()
+                  ? recipe.image_url
+                  : "/images/no_pic.png"
+              }
               alt={recipe.title}
               className="w-full h-48 object-contain object-center rounded"
             />
@@ -137,7 +155,7 @@ useEffect(() => {
             <h3 className="text-lg font-bold mt-2">{recipe.title}</h3>
             <p className="text-sm text-gray-600">👨‍🍳 {recipe.creator_name}</p>
             <p className="text-sm mt-1">📝 {recipe.description}</p>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

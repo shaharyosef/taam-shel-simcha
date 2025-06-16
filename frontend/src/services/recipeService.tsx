@@ -45,17 +45,18 @@ export async function removeFromFavorites(recipeId: number) {
 
 export async function getFavorites(): Promise<number[]> {
   const token = localStorage.getItem("token");
-  const response = await fetch("http://localhost:8000/favorites", {
+
+  if (!token) return []; // למקרה של Guest או בעיה
+
+  const response = await axios.get(`${BASE_URL}/favorites`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  if (!response.ok) throw new Error("Failed to fetch favorites");
-
-  const data = await response.json();
-  return data.map((recipe: any) => recipe.id);  // ← חשוב שזה באמת מחזיר מזהים בלבד
+  return response.data.map((recipe: any) => recipe.id);
 }
+
 
 
 export async function rateRecipe(recipeId: number, rating: number) {
@@ -73,3 +74,23 @@ export async function rateRecipe(recipeId: number, rating: number) {
 }
 
 
+export async function getComments(recipeId: number) {
+  const response = await fetch(`http://localhost:8000/comments/${recipeId}`);
+  if (!response.ok) throw new Error("Failed to fetch comments");
+  return await response.json();
+}
+
+export async function addComment(recipeId: number, content: string) {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`http://localhost:8000/comments/${recipeId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ content }),
+  });
+
+  if (!response.ok) throw new Error("Failed to add comment");
+  return await response.json();
+}

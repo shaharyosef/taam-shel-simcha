@@ -6,7 +6,7 @@ import ResetPasswordPage from "../pages/ResetPasswordPage";
 import AiRecipePage from "../pages/AiRecipePage";
 import PublicRecipesPage from "../pages/PublicRecipesPage";
 import AllRecipesPage from "../pages/AllRecipesPage";
-
+import RecipeDetailsPage from "../pages/RecipeDetailsPage";
 import GuestLayout from "../layouts/ GuestLayout";
 import UserLayout from "../layouts/UserLayout";
 
@@ -28,6 +28,7 @@ export default function AppRoutes() {
       <Route element={<UserLayout />}>
         <Route path="/recipes" element={<AllRecipesPage />} />
         <Route path="/recipes/ai" element={<AiRecipePage />} />
+        <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
       </Route>
     </Routes>
   );

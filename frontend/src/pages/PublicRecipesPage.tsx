@@ -28,7 +28,7 @@ export default function PublicRecipesPage() {
         >
           {/* דירוג בפינה הימנית העליונה */}
           <div className="absolute top-2 right-2 bg-yellow-400 text-white px-2 py-1 rounded-md text-xs font-bold shadow">
-            ⭐ {Recipe.average_rating !== undefined ? Recipe.average_rating.toFixed(1) : "אין דירוג"}
+            {Recipe.average_rating != null ? Recipe.average_rating.toFixed(1) : "אין דירוג"}
           </div>
 
           {/* תמונה */}
