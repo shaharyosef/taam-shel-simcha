@@ -25,6 +25,11 @@ router = APIRouter(prefix="/recipes", tags=["recipes"])
 def get_all_recipes(db: Session = Depends(get_db)):
     recipes = db.query(models.Recipe).filter(models.Recipe.is_public == True).all()
 
+    avg_ratings = dict(
+        db.query(Rating.recipe_id, func.avg(Rating.rating))
+        .group_by(Rating.recipe_id)
+        .all()
+    )
     response = []
     
     for recipe in recipes:
@@ -41,6 +46,7 @@ def get_all_recipes(db: Session = Depends(get_db)):
             is_public = recipe.is_public,
             creator_name = recipe.creator.username if recipe.creator else "Unknown",
             created_at=recipe.created_at.isoformat() if recipe.created_at else None,
+            average_rating=round(avg_ratings.get(recipe.id), 2) if avg_ratings.get(recipe.id) else None
         ))
 
     return response

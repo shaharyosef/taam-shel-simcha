@@ -47,17 +47,20 @@ def get_favorites(
     for f in favorites:
         if f.recipe is not None:
             response.append(RecipeResponse(
-                id=f.recipe.id,
-                title=f.recipe.title,
-                description=f.recipe.description,
-                ingredients=f.recipe.ingredients,
-                instructions=f.recipe.instructions,
-                image_url=f.recipe.image_url,
-                video_url=f.recipe.video_url,
-                user_id=f.recipe.user_id,
-                creator_name=f.recipe.creator.username if f.recipe.creator else "Unknown",
-                created_at=f.recipe.created_at.isoformat() if f.recipe.created_at else None
-            ))
+                    id=f.recipe.id,
+                    title=f.recipe.title,
+                    description=f.recipe.description,
+                    ingredients=f.recipe.ingredients,
+                    instructions=f.recipe.instructions,
+                    image_url=f.recipe.image_url,
+                    video_url=f.recipe.video_url,
+                    user_id=f.recipe.user_id,
+                    creator_name=f.recipe.creator.username if f.recipe.creator else "Unknown",
+                    created_at=f.recipe.created_at.isoformat() if f.recipe.created_at else None,
+                    share_token=f.recipe.share_token,
+                    is_public=f.recipe.is_public
+                ))
+
 
     return response
 

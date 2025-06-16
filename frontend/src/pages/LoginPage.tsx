@@ -1,11 +1,12 @@
 // src/pages/LoginPage.tsx
 import { useState } from "react";
 import { Button } from "../components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate(); // ✅ הוספת useNavigate
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +22,7 @@ export default function LoginPage() {
 
       localStorage.setItem("token", data.access_token);
       alert("התחברת בהצלחה!");
+      navigate("/recipes"); // ✅ הפנייה אחרי התחברות
     } catch (err: any) {
       alert(err.message);
     }
