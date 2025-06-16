@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.db.database import Base
@@ -15,6 +15,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     is_admin = Column(Boolean, default=False)
     profile_image_url = Column(String, nullable=True)
+    wants_emails = Column(Boolean, default=True)
 
 
     recipes = relationship("Recipe", back_populates="creator", cascade="all, delete")
@@ -69,9 +70,13 @@ class Rating(Base):
     rating = Column(Integer, nullable=False)  # מ-1 עד 5
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # קשרים
+    __table_args__ = (
+        UniqueConstraint("user_id", "recipe_id", name="unique_user_recipe_rating"),
+    )
+
     user = relationship("User", back_populates="ratings")
     recipe = relationship("Recipe", back_populates="ratings")
+
 
 
 class Comment(Base):

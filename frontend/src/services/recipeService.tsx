@@ -1,24 +1,26 @@
 import axios from "axios";
-import { Recipe } from "../types/Recipe";
 
 const BASE_URL = "http://localhost:8000";
 
+// שליפת מתכונים ציבוריים רנדומליים (8)
 export async function getPublicRecipes() {
   const response = await axios.get(`${BASE_URL}/recipes/public-random`);
   return response.data;
 }
 
+// שליפת כל המתכונים (ציבוריים ופרטיים – תלוי בהרשאות)
 export async function getAllPublicRecipes() {
   const response = await axios.get(`${BASE_URL}/recipes`);
   return response.data;
 }
 
+// מיון מתכונים לפי קריטריון ודף (pagination)
 export async function getSortedRecipes(sort: string, page: number = 1) {
   const response = await axios.get(`${BASE_URL}/recipes/sorted/${sort}?page=${page}`);
   return response.data;
 }
 
-
+// הוספה למועדפים
 export async function addToFavorites(recipeId: number) {
   const token = localStorage.getItem("token");
   const response = await axios.post(
@@ -33,6 +35,7 @@ export async function addToFavorites(recipeId: number) {
   return response.data;
 }
 
+// הסרה ממועדפים
 export async function removeFromFavorites(recipeId: number) {
   const token = localStorage.getItem("token");
   const response = await axios.delete(`${BASE_URL}/favorites/${recipeId}`, {
@@ -43,10 +46,11 @@ export async function removeFromFavorites(recipeId: number) {
   return response.data;
 }
 
+// שליפת רשימת ה-IDs של מתכונים שמסומנים כמועדפים
 export async function getFavorites(): Promise<number[]> {
   const token = localStorage.getItem("token");
 
-  if (!token) return []; // למקרה של Guest או בעיה
+  if (!token) return [];
 
   const response = await axios.get(`${BASE_URL}/favorites`, {
     headers: {
@@ -57,12 +61,11 @@ export async function getFavorites(): Promise<number[]> {
   return response.data.map((recipe: any) => recipe.id);
 }
 
-
-
+// דירוג מתכון
 export async function rateRecipe(recipeId: number, rating: number) {
   const token = localStorage.getItem("token");
   const response = await axios.post(
-    `http://localhost:8000/recipes/recipe/${recipeId}/rate`,
+    `${BASE_URL}/recipes/recipe/${recipeId}/rate`,
     { rating },
     {
       headers: {
@@ -73,16 +76,17 @@ export async function rateRecipe(recipeId: number, rating: number) {
   return response.data;
 }
 
-
+// שליפת תגובות למתכון
 export async function getComments(recipeId: number) {
-  const response = await fetch(`http://localhost:8000/comments/${recipeId}`);
+  const response = await fetch(`${BASE_URL}/comments/${recipeId}`);
   if (!response.ok) throw new Error("Failed to fetch comments");
   return await response.json();
 }
 
+// הוספת תגובה למתכון
 export async function addComment(recipeId: number, content: string) {
   const token = localStorage.getItem("token");
-  const response = await fetch(`http://localhost:8000/comments/${recipeId}`, {
+  const response = await fetch(`${BASE_URL}/comments/${recipeId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -25,11 +25,19 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username already taken")
 
     hashed_pw = hash_password(user.password)
-    new_user = models.User(email=user.email, password=hashed_pw, username=user.username)
+
+    new_user = models.User(
+        email=user.email,
+        password=hashed_pw,
+        username=user.username,
+        wants_emails=user.wants_emails  # ✅ הוספה כאן
+    )
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return {"message": "User created successfully", "user_id": new_user.id}
+
 
 @router.post("/login")
 def login(user: UserLogin, db: Session = Depends(get_db)):
@@ -67,10 +75,29 @@ def update_profile(
     if user_update.password:
         current_user.password = hash_password(user_update.password)
 
+    # ✅ אם נשלח ערך לשדה wants_emails – נעדכן אותו
+    if user_update.wants_emails is not None:
+        current_user.wants_emails = user_update.wants_emails
+
     db.commit()
     db.refresh(current_user)
 
     return {"message": "Profile updated successfully"}
+
+
+@router.get("/me", response_model=UserResponse)
+def read_current_user(current_user: User = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "is_admin": current_user.is_admin,
+        "created_at": current_user.created_at,
+        "wants_emails": current_user.wants_emails,
+        "profile_image_url": current_user.profile_image_url,
+    }
+
+
 
 
 @router.post("/forgot-password")

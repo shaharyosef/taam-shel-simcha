@@ -13,7 +13,7 @@ import datetime
 load_dotenv()
 
 # 🔑 קונפיג של JWT
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY") 
 ALGORITHM = "HS256"
 
 print("🔑 SECRET_KEY:", SECRET_KEY)

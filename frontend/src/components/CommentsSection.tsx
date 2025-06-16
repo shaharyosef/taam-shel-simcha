@@ -1,92 +1,128 @@
 import { useEffect, useState } from "react";
-import { getComments, addComment } from "../services/recipeService";
+import api, { deleteComment } from "../services/api";
+import { Comment, CommentForm } from "../types/Comment";
 
-type Comment = {
+interface CurrentUser {
   id: number;
-  content: string;
   username: string;
-  created_at: string;
-};
+  is_admin: boolean;
+}
 
-type Props = {
-  recipeId: number;
-};
-
-export default function CommentsSection({ recipeId }: Props) {
+export default function CommentsSection({ recipeId }: { recipeId: number }) {
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const fetchComments = async () => {
-    try {
-      const data = await getComments(recipeId);
-      setComments(data);
-    } catch (err) {
-      console.error("שגיאה בהבאת תגובות:", err);
-    }
-  };
+  const [form, setForm] = useState<CommentForm>({ content: "" });
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
 
   useEffect(() => {
     fetchComments();
+    fetchCurrentUser();
   }, [recipeId]);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const res = await api.get("/auth/me");
+      setCurrentUser(res.data);
+    } catch {
+      setCurrentUser(null);
+    } finally {
+      setLoadingUser(false);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const res = await api.get(`/comments/${recipeId}`);
+      setComments(res.data);
+    } catch (err) {
+      console.error("שגיאה בטעינת תגובות", err);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
-
     try {
-      setLoading(true);
-      const newC = await addComment(recipeId, newComment);
-      setComments([newC, ...comments]); // הצג מיידית
-      setNewComment("");
-      setError("");
-    } catch (err: any) {
-      setError("נראה שאתה לא מחובר או שיש שגיאה.");
-    } finally {
-      setLoading(false);
+      await api.post(`/comments/${recipeId}`, form);
+      setForm({ content: "" });
+      fetchComments();
+    } catch {
+      alert("שגיאה בהוספת תגובה");
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("למחוק את התגובה?")) return;
+    try {
+      await deleteComment(id);
+      setComments((prev) => prev.filter((c) => c.id !== id));
+    } catch {
+      alert("שגיאה במחיקת תגובה");
     }
   };
 
   return (
-    <div className="mt-8 border-t pt-4">
-      <h3 className="text-lg font-bold mb-2">💬 תגובות</h3>
-
-      {/* טופס תגובה */}
-      <form onSubmit={handleSubmit} className="mb-4 flex flex-col gap-2">
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          className="border p-2 rounded w-full resize-none"
-          rows={3}
-          placeholder="כתוב תגובה..."
-        />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="self-start px-4 py-2 bg-primary text-white rounded shadow hover:bg-hover transition disabled:opacity-50"
-        >
-          {loading ? "שולח..." : "שלח תגובה"}
-        </button>
-      </form>
-
-      {/* רשימת תגובות */}
-      {comments.length === 0 ? (
-        <p className="text-sm text-gray-600">אין עדיין תגובות. תהיה הראשון!</p>
+    <div className="text-right" dir="rtl">
+      {!loadingUser ? (
+        currentUser ? (
+          <form onSubmit={handleSubmit} className="mb-6 animate-fadeIn">
+            <textarea
+              className="w-full border border-gray-300 rounded-lg p-3 text-sm shadow focus:outline-none focus:ring focus:border-blue-300 resize-none transition"
+              placeholder="כתוב תגובה..."
+              value={form.content}
+              onChange={(e) => setForm({ content: e.target.value })}
+              rows={3}
+              required
+            />
+            <button
+              type="submit"
+              className="mt-2 bg-blue-500 text-white px-5 py-2 rounded-xl hover:bg-blue-600 transition transform hover:scale-105 shadow"
+            >
+              שלח תגובה
+            </button>
+          </form>
+        ) : (
+          <p className="text-gray-500 text-sm mb-6 italic animate-fadeIn">
+            יש להתחבר כדי להגיב.
+          </p>
+        )
       ) : (
-        <ul className="space-y-4">
-          {comments.map((c) => (
-            <li key={c.id} className="border p-3 rounded shadow-sm bg-gray-50">
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{c.content}</p>
-              <div className="text-xs text-gray-500 mt-1 flex justify-between">
-                <span>🧑 {c.username}</span>
-                <span>{new Date(c.created_at).toLocaleString("he-IL")}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <p className="text-gray-400 text-sm mb-6 animate-pulse">טוען תגובות...</p>
       )}
+
+      <div className="space-y-4">
+        {comments.length > 0 ? (
+          comments.map((comment) => (
+            <div
+              key={comment.id}
+              className="bg-white border border-gray-200 shadow-sm rounded-xl p-4 relative hover:shadow-md transition-all"
+            >
+              <p className="text-gray-800 text-sm mb-2">{comment.content}</p>
+              <div className="text-xs text-gray-500 flex justify-between items-center">
+                <span>
+                  🧑‍💬 {comment.user?.username || comment.user_name || "משתמש"}
+                </span>
+                <span>
+                  🗓 {new Date(comment.created_at).toLocaleString("he-IL")}
+                </span>
+              </div>
+              {(currentUser?.is_admin ||
+                currentUser?.id === comment.user?.id) && (
+                <button
+                  onClick={() => handleDelete(comment.id)}
+                  className="absolute top-2 left-3 text-red-600 hover:text-red-800 text-lg transition"
+                  title="מחק תגובה"
+                >
+                  🗑️
+                </button>
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-gray-400 italic animate-fadeIn">
+            אין תגובות עדיין.
+          </p>
+        )}
+      </div>
     </div>
   );
 }

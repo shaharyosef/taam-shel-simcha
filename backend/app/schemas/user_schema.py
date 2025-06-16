@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime
 
@@ -6,6 +6,10 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
+    wants_emails: bool = Field(
+        default=True,
+        description="האם המשתמש מעוניין לקבל מיילים עם עדכונים, הצעות ומתכונים מומלצים"
+    )
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -18,6 +22,10 @@ class TokenResponse(BaseModel):
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
+    wants_emails: Optional[bool] = Field(
+        default=None,
+        description="עדכון העדפה לקבלת דיוור במייל"
+    )
 
     class Config:
         orm_mode = True
@@ -36,6 +44,10 @@ class UserResponse(BaseModel):
     email: EmailStr
     is_admin: bool
     created_at: datetime
+    wants_emails: bool
+    profile_image_url: Optional[str] = None  # ✅ הוספת שדה חסר
 
     class Config:
-        from_attributes = True
+        from_attributes = True  # ✅ חובה!
+
+
