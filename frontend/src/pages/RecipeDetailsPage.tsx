@@ -22,7 +22,6 @@ export default function RecipeDetailsPage() {
       const match = all.find((r: Recipe) => r.id === Number(id));
       setRecipe(match || null);
     }
-
     fetch();
   }, [id]);
 
@@ -32,7 +31,6 @@ export default function RecipeDetailsPage() {
       const favs = await getFavorites();
       setIsFavorited(favs.includes(recipe.id));
     }
-
     checkFavorite();
   }, [recipe]);
 
@@ -46,30 +44,32 @@ export default function RecipeDetailsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#fff0e5] via-[#ffe4e1] to-[#fff0e5] animate-gradient p-4">
-      <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-lg rounded-3xl shadow-[0_0_60px_rgba(0,0,0,0.15)] p-8 transition-all duration-500 text-right" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-[#fff4e6] via-[#fff0e0] to-[#ffe8dc] p-6 font-sans">
+      <div className="max-w-5xl mx-auto bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-10 transition-all duration-500 text-right border border-orange-200" dir="rtl">
+
         <Link
           to="/recipes"
-          className="inline-block mb-6 text-blue-600 hover:underline text-sm"
+          className="inline-block mb-8 text-orange-600 hover:underline text-base font-semibold hover:text-orange-800 transition-all"
         >
           ← חזרה לרשימת המתכונים
         </Link>
 
-        <h1 className="text-4xl font-extrabold mb-1 text-gray-800 animate-fadeIn">
+        <h1 className="text-5xl font-extrabold mb-2 text-orange-800 drop-shadow-lg animate-fadeIn">
           {recipe.title}
         </h1>
-        <p className="text-sm text-gray-500 mb-3">👨‍🍳 {recipe.creator_name}</p>
 
-        <div className="inline-block bg-yellow-200 text-yellow-800 font-semibold px-4 py-1 rounded-full text-sm mb-3 shadow-sm">
+        <p className="text-sm text-gray-600 mb-3">👨‍🍳 {recipe.creator_name}</p>
+
+        <div className="inline-block bg-yellow-100 text-yellow-700 font-bold px-4 py-1 rounded-full text-sm mb-4 shadow-sm">
           ⭐ {recipe.average_rating != null ? recipe.average_rating.toFixed(1) : "אין דירוג"}
         </div>
 
-        <p className="text-sm text-gray-400 mb-6">📅 {formattedDate}</p>
+        <p className="text-sm text-gray-500 mb-6">📅 {formattedDate}</p>
 
         <img
           src={recipe.image_url?.trim() || "/images/no_pic.png"}
           alt={recipe.title}
-          className="w-full max-h-[400px] object-cover rounded-xl shadow-md mb-8 hover:scale-105 transition-transform duration-300"
+          className="w-full max-h-[500px] object-contain object-center rounded-2xl mb-10 transition-transform duration-500 hover:scale-105"
         />
 
         <button
@@ -86,15 +86,17 @@ export default function RecipeDetailsPage() {
               alert("שגיאה בעדכון מועדפים");
             }
           }}
-          className="text-xl mb-6 hover:scale-105 transition-transform duration-200 bg-white/60 px-4 py-2 rounded-xl shadow hover:bg-red-100"
+          className={`text-xl mb-10 px-6 py-3 rounded-xl shadow-md font-bold transition-colors duration-300 ${
+            isFavorited
+              ? 'bg-orange-100 text-orange-600 hover:bg-orange-200'
+              : 'bg-white text-gray-700 hover:bg-orange-100 hover:text-orange-600'
+          }`}
         >
           {isFavorited ? "❤️ הסר מהמועדפים" : "🤍 הוסף למועדפים"}
         </button>
 
-        <div className="my-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-            📊 דרג את המתכון
-          </h2>
+        <div className="my-10">
+          <h2 className="text-3xl font-bold text-orange-700 mb-4">📊 דרג את המתכון</h2>
           <StarRating
             onRate={async (rating) => {
               try {
@@ -107,38 +109,34 @@ export default function RecipeDetailsPage() {
           />
         </div>
 
-        <div className="mb-6">
-          <h2 className="text-2xl font-semibold mb-3 text-gray-800">
-            🧂 מרכיבים
-          </h2>
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold mb-3 text-orange-700">🧂 מרכיבים</h2>
           {ingredients?.length ? (
-            <ul className="list-disc pr-5 text-gray-700 space-y-1 text-sm">
+            <ul className="list-disc pr-6 text-gray-800 space-y-2 text-base">
               {ingredients.map((item, idx) => (
                 <li key={idx}>{item}</li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-gray-400">לא צוינו מרכיבים</p>
+            <p className="text-base text-gray-500">לא צוינו מרכיבים</p>
           )}
         </div>
 
-        <div className="mb-6">
-          <h2 className="text-2xl font-semibold mb-3 text-gray-800">
-            👨‍🍳 הוראות הכנה
-          </h2>
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold mb-3 text-orange-700">👨‍🍳 הוראות הכנה</h2>
           {instructions?.length ? (
-            <ol className="list-decimal pr-5 text-gray-700 space-y-1 text-sm break-words max-w-full">
+            <ol className="list-decimal pr-6 text-gray-800 space-y-2 text-base">
               {instructions.map((step, idx) => (
                 <li key={idx}>{step}</li>
               ))}
             </ol>
           ) : (
-            <p className="text-sm text-gray-400">לא צוינו הוראות</p>
+            <p className="text-base text-gray-500">לא צוינו הוראות</p>
           )}
         </div>
 
-        <div className="mt-10 border-t pt-6">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">💬 תגובות</h2>
+        <div className="mt-12 border-t border-orange-200 pt-8">
+          <h2 className="text-3xl font-extrabold mb-6 text-orange-800">💬 תגובות</h2>
           <CommentsSection recipeId={recipe.id} />
         </div>
       </div>
