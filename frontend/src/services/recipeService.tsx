@@ -6,7 +6,9 @@ const BASE_URL = "http://localhost:8000";
 
 // שליפת מתכונים ציבוריים רנדומליים (8)
 export async function getPublicRecipes() {
-  const response = await axios.get(`${BASE_URL}/recipes/public-random`);
+  const response = await axios.get(`${BASE_URL}/recipes/public-random`, {
+    headers: {}  // 👈 לא שולח Authorization בטעות
+  });
   return response.data;
 }
 
