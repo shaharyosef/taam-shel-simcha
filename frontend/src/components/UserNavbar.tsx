@@ -12,7 +12,7 @@ export default function UserNavbar() {
   };
 
   return (
-    <header className="bg-primary text-white shadow-md w-full">
+    <header className="bg-primary text-white shadow-md w-full z-50 relative">
       <div className="w-full px-4 py-3 flex flex-row-reverse items-center justify-between">
         {/* לוגו + שם מימין */}
         <Link to="/recipes" className="flex items-center gap-2">
