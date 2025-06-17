@@ -15,6 +15,7 @@ import EditRecipePage from "../pages/EditRecipePage";
 import CreateRecipePage from "../pages/CreateRecipePage";
 import EditProfilePage from "../pages/EditProfilePage";
 import MyRecipesPage from "../pages/MyRecipesPage";
+import MyFavoritesPage from "../pages/MyFavoritesPage";
 
 export default function AppRoutes() {
   return (
@@ -45,6 +46,7 @@ export default function AppRoutes() {
         <Route path="/recipes/create" element={<RequireAuth><CreateRecipePage /></RequireAuth>} />
         <Route path="/profile" element={<EditProfilePage/>} />
         <Route path="/recipes/mine" element={<MyRecipesPage />} />
+        <Route path="/favorites" element={<MyFavoritesPage />} />
       </Route>
     </Routes>
   );

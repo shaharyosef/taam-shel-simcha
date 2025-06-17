@@ -1,14 +1,14 @@
 export interface Recipe {
   id: number;
   title: string;
-  description?: string;
+  description: string;
   ingredients: string;
-  instructions?: string;
+  instructions: string;
   image_url?: string;
   video_url?: string;
-  user_id: number;
-  share_token: string;
-  is_public: boolean;
+  is_public: boolean;  // הוספנו את זה
   creator_name: string;
-  created_at?: string;
+  created_at: string;
+  average_rating?: number;
+  user_id: number;
 }

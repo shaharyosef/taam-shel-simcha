@@ -338,7 +338,7 @@ def rate_recipe(
         db.add(new_rating)
 
         # ✅ שליחת מייל לבעל המתכון רק בדירוג חדש
-        if recipe.creator and recipe.creator.email:
+        if recipe.creator and recipe.creator.email and recipe.creator.wants_emails:
             send_rating_notification_email(
                 to_email=recipe.creator.email,
                 recipe_title=recipe.title,

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { getMyRecipes, addToFavorites, removeFromFavorites, rateRecipe } from "../services/recipeService";
+import { getmyFavorites, addToFavorites, removeFromFavorites, rateRecipe } from "../services/recipeService";
 import { Recipe } from "../types/Recipe";
 import { Link } from "react-router-dom";
 import RecipeShareButton from "../components/RecipeShareButton";
 import StarRating from "../components/StarRating";
 
-export default function MyRecipesPage() {
+export default function MyFavoritesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -14,11 +14,11 @@ export default function MyRecipesPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await getMyRecipes();
+        const data: Recipe[] = await getmyFavorites();
         setRecipes(data);
-        setFavorites(data.filter((r) => r.is_public).map((r) => r.id)); // אפשר לשנות אם רוצים לשמור מועדפים אמיתיים
+        setFavorites(data.map((r) => r.id));
       } catch (err) {
-        setError("שגיאה בטעינת המתכונים שלי 😥");
+        setError("שגיאה בטעינת המועדפים 😥");
       } finally {
         setLoading(false);
       }
@@ -42,23 +42,14 @@ export default function MyRecipesPage() {
 
   return (
     <div className="p-4 text-right" dir="rtl">
-      <h1 className="text-3xl font-bold text-primary mb-6 text-center"> המתכונים שלי 🍲</h1>
-
-      <div className="mb-4 text-center">
-        <Link
-          to="/recipes/create"
-          className="bg-primary hover:bg-hover text-white px-4 py-2 rounded shadow transition text-sm font-semibold"
-        >
-          ➕ הוסף מתכון חדש
-        </Link>
-      </div>
+      <h1 className="text-3xl font-bold text-primary mb-6 text-center"> המועדפים שלי 💖</h1>
 
       {loading ? (
         <p className="text-center">טוען מתכונים...</p>
       ) : error ? (
         <p className="text-center text-red-600">{error}</p>
       ) : recipes.length === 0 ? (
-        <p className="text-center text-gray-600">לא יצרת עדיין מתכונים.</p>
+        <p className="text-center text-gray-600">לא הוספת עדיין מתכונים למועדפים.</p>
       ) : (
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {recipes.map((recipe) => (
@@ -83,7 +74,7 @@ export default function MyRecipesPage() {
                 <button
                   onClick={() => toggleFavorite(recipe.id)}
                   className="text-2xl hover:scale-110 transition-transform"
-                  title="הוסף למועדפים"
+                  title="הסר ממועדפים"
                 >
                   {favorites.includes(recipe.id) ? "❤️" : "🤍"}
                 </button>

@@ -63,6 +63,20 @@ export async function getFavorites(): Promise<number[]> {
   return response.data.map((recipe: any) => recipe.id);
 }
 
+export async function getmyFavorites(): Promise<Recipe[]> {
+  const token = localStorage.getItem("token");
+
+  if (!token) return [];
+
+  const response = await axios.get(`${BASE_URL}/favorites`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}
+
 // דירוג מתכון
 export async function rateRecipe(recipeId: number, rating: number) {
   const token = localStorage.getItem("token");
