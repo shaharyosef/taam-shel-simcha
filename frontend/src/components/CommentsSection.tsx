@@ -94,19 +94,21 @@ export default function CommentsSection({ recipeId }: { recipeId: number }) {
           comments.map((comment) => (
             <div
               key={comment.id}
-              className="bg-white border border-gray-200 shadow-sm rounded-xl p-4 relative hover:shadow-md transition-all"
+              className="bg-white border border-gray-200 shadow-sm rounded-xl p-4 pl-10 relative hover:shadow-md transition-all max-w-3xl"
             >
-              <p className="text-gray-800 text-sm mb-2">{comment.content}</p>
+              <p className="text-gray-800 text-sm mb-2 break-words whitespace-pre-wrap overflow-hidden">
+                {comment.content}
+              </p>
               <div className="text-xs text-gray-500 flex justify-between items-center">
                 <span>
-                  🧑‍💬 {comment.user?.username || comment.user_name || "משתמש"}
+                  🧑‍💬 {comment.username || "משתמש"}
                 </span>
                 <span>
                   🗓 {new Date(comment.created_at).toLocaleString("he-IL")}
                 </span>
               </div>
               {(currentUser?.is_admin ||
-                currentUser?.id === comment.user?.id) && (
+                currentUser?.id === comment.user_id) && (
                 <button
                   onClick={() => handleDelete(comment.id)}
                   className="absolute top-2 left-3 text-red-600 hover:text-red-800 text-lg transition"

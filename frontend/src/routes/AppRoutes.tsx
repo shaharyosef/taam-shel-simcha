@@ -1,3 +1,4 @@
+// AppRoutes.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
@@ -9,6 +10,11 @@ import AllRecipesPage from "../pages/AllRecipesPage";
 import RecipeDetailsPage from "../pages/RecipeDetailsPage";
 import GuestLayout from "../layouts/ GuestLayout";
 import UserLayout from "../layouts/UserLayout";
+import RequireAuth from "../components/RequireAuth";
+import EditRecipePage from "../pages/EditRecipePage";
+import CreateRecipePage from "../pages/CreateRecipePage";
+import EditProfilePage from "../pages/EditProfilePage";
+import MyRecipesPage from "../pages/MyRecipesPage";
 
 export default function AppRoutes() {
   return (
@@ -24,11 +30,21 @@ export default function AppRoutes() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Route>
 
-      {/* User routes */}
-      <Route element={<UserLayout />}>
+      {/* Protected user routes */}
+      <Route
+        element={
+          <RequireAuth>
+            <UserLayout />
+          </RequireAuth>
+        }
+      >
         <Route path="/recipes" element={<AllRecipesPage />} />
         <Route path="/recipes/ai" element={<AiRecipePage />} />
         <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
+        <Route path="/recipes/:id/edit" element={<EditRecipePage />} />
+        <Route path="/recipes/create" element={<RequireAuth><CreateRecipePage /></RequireAuth>} />
+        <Route path="/profile" element={<EditProfilePage/>} />
+        <Route path="/recipes/mine" element={<MyRecipesPage />} />
       </Route>
     </Routes>
   );

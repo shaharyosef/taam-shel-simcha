@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import { Recipe } from "../types/Recipe"
+import api from "./api";
 const BASE_URL = "http://localhost:8000";
 
 // שליפת מתכונים ציבוריים רנדומליים (8)
@@ -97,4 +99,16 @@ export async function addComment(recipeId: number, content: string) {
 
   if (!response.ok) throw new Error("Failed to add comment");
   return await response.json();
+}
+
+
+// שליפת המתכונים של המשתמש הנוכחי
+export async function getMyRecipes(): Promise<Recipe[]> {
+  const token = localStorage.getItem("token");
+  const response = await api.get("/recipes/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
 }

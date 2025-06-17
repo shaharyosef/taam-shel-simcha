@@ -114,11 +114,11 @@ def get_public_recipe(recipe_id: int, db: Session = Depends(get_db)):
         instructions=recipe.instructions,
         image_url=recipe.image_url,
         video_url=recipe.video_url,
-        user_id=recipe.user_id,
         share_token = recipe.share_token,
         is_public = recipe.is_public,
         creator_name = recipe.creator.username if recipe.creator else "Unknown",
-        created_at = recipe.created_at.isoformat() if recipe.created_at else None
+        created_at = recipe.created_at.isoformat() if recipe.created_at else None,
+        user_id=recipe.user_id
     )
 
 @router.get("/me", response_model=list[RecipeResponse])
@@ -127,6 +127,12 @@ def get_my_recipes(
     current_user: User = Depends(get_current_user)
 ):
     recipes = db.query(models.Recipe).filter(models.Recipe.user_id == current_user.id).all()
+
+    avg_ratings = dict(
+        db.query(Rating.recipe_id, func.avg(Rating.rating))
+        .group_by(Rating.recipe_id)
+        .all()
+    )
 
     return [
         RecipeResponse(
@@ -142,6 +148,7 @@ def get_my_recipes(
             is_public=recipe.is_public,
             creator_name=recipe.creator.username,
             created_at=recipe.created_at.isoformat() if recipe.created_at else None,
+            average_rating=round(avg_ratings.get(recipe.id), 2) if avg_ratings.get(recipe.id) else None
         )
         for recipe in recipes
     ]
@@ -202,6 +209,41 @@ def update_recipe(
     db.refresh(recipe)
 
     return {"message": "Recipe updated successfully"}
+
+
+@router.get("/{recipe_id}", response_model=RecipeResponse)
+def get_recipe_by_id(
+    recipe_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
+
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    # רק הבעלים או אדמין יכולים לראות
+    if recipe.user_id != current_user.id and not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="You are not authorized to view this recipe")
+
+    avg_rating = db.query(func.avg(Rating.rating)).filter(Rating.recipe_id == recipe_id).scalar()
+
+    return RecipeResponse(
+        id=recipe.id,
+        title=recipe.title,
+        description=recipe.description,
+        ingredients=recipe.ingredients,
+        instructions=recipe.instructions,
+        image_url=recipe.image_url,
+        video_url=recipe.video_url,
+        share_token=recipe.share_token,
+        is_public=recipe.is_public,
+        created_at=recipe.created_at.isoformat() if recipe.created_at else None,
+        creator_name=recipe.creator.username if recipe.creator else "לא ידוע",
+        average_rating=round(avg_rating, 2) if avg_rating else None,
+        user_id=recipe.user_id
+    )
+
 
 
 @router.get("/admin/recipes", response_model=list[RecipeResponse])
@@ -357,7 +399,8 @@ def search_recipes(
             share_token=recipe.share_token,
             is_public=recipe.is_public,
             created_at=recipe.created_at.isoformat() if recipe.created_at else None,
-            creator_name=creator
+            creator_name=creator,
+            user_id=recipe.user_id
         ))
 
     return result
@@ -387,6 +430,7 @@ def get_top_rated_recipes(db: Session = Depends(get_db)):
             video_url=recipe.video_url,
             created_at=recipe.created_at.isoformat() if recipe.created_at else None,
             creator_name=creator_name,
+            user_id=recipe.user_id
         ))
 
     return result
@@ -462,7 +506,8 @@ def get_top_rated_recipes(page: int = 1, db: Session = Depends(get_db)):
             creator_name=r.creator.username if r.creator else "לא ידוע",
             share_token=r.share_token,
             is_public=r.is_public,
-            average_rating=round(avg_rating, 2) if avg_rating else None
+            average_rating=round(avg_rating, 2) if avg_rating else None,
+            user_id=r.user_id
         ))
 
     return {"recipes": results, "total_pages": total_pages, "current_page": page}
@@ -496,7 +541,8 @@ def get_random_recipes(page: int = 1, db: Session = Depends(get_db)):
             creator_name=r.creator.username if r.creator else "לא ידוע",
             share_token=r.share_token,
             is_public=r.is_public,
-            average_rating=round(avg_rating, 2) if avg_rating else None
+            average_rating=round(avg_rating, 2) if avg_rating else None,
+            user_id=r.user_id
         ))
 
     return {"recipes": results, "total_pages": total_pages, "current_page": page}
@@ -531,7 +577,8 @@ def get_recent_recipes(page: int = 1, db: Session = Depends(get_db)):
             creator_name=r.creator.username if r.creator else "לא ידוע",
             share_token=r.share_token,
             is_public=r.is_public,
-            average_rating=round(avg_rating, 2) if avg_rating else None
+            average_rating=round(avg_rating, 2) if avg_rating else None,
+            user_id=r.user_id
         ))
 
     return {"recipes": results, "total_pages": total_pages, "current_page": page}
@@ -564,7 +611,8 @@ def get_most_favorited_recipes(page: int = 1, db: Session = Depends(get_db)):
             creator_name=r.creator.username if r.creator else "לא ידוע",
             share_token=r.share_token,
             is_public=r.is_public,
-            average_rating=round(avg_rating, 2) if avg_rating else None
+            average_rating=round(avg_rating, 2) if avg_rating else None,
+            user_id=r.user_id
         ))
 
     return {"recipes": results, "total_pages": total_pages, "current_page": page}
@@ -598,7 +646,8 @@ def get_random_public_recipes(db: Session = Depends(get_db)):
                 creator_name=r.creator.username if r.creator else "לא ידוע",
                 share_token=r.share_token,
                 is_public=r.is_public,
-                average_rating=round(avg_rating, 2) if avg_rating else None  # ⬅️ זה השדה החדש
+                average_rating=round(avg_rating, 2) if avg_rating else None,  # ⬅️ זה השדה החדש
+                user_id=r.user_id
             )
         )
 

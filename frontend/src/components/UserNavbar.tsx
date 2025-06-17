@@ -26,18 +26,18 @@ export default function UserNavbar() {
 
         {/* ניווט משמאל */}
         <nav className="flex gap-3 items-center">
-            <Link
-             to="/recipes"
-             className="px-4 py-2 rounded-md transition-colors bg-primary hover:bg-hover text-white text-sm font-medium shadow"
-            >   
-                🍽️ מתכונים
-            </Link>
+          <Link
+            to="/recipes"
+            className="px-4 py-2 rounded-md transition-colors bg-primary hover:bg-hover text-white text-sm font-medium shadow"
+          >
+            🍽️ מתכונים
+          </Link>
 
           <Link
             to="/recipes/ai"
             className="px-4 py-2 rounded-md transition-colors bg-primary hover:bg-hover text-white text-sm font-medium shadow"
           >
-            🤖 AI מתכונים עם 
+            🤖 AI מתכונים עם
           </Link>
 
           <div className="relative">
@@ -48,13 +48,24 @@ export default function UserNavbar() {
               👤 פרופיל
             </button>
             {dropdownOpen && (
-              <div className="absolute left-0 mt-2 w-36 bg-white text-black border rounded shadow z-10 text-right">
-            
+              <div className="absolute left-0 mt-2 w-44 bg-white text-black border rounded shadow z-10 text-right">
                 <Link
                   to="/profile"
                   className="block px-4 py-2 hover:bg-gray-100"
                 >
                   ✏️ עריכת פרופיל
+                </Link>
+                <Link
+                  to="/recipes/mine"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                >
+                  🍲 המתכונים שלי
+                </Link>
+                <Link
+                  to="/favorites"
+                  className="block px-4 py-2 hover:bg-gray-100"
+                >
+                  ❤️ המועדפים שלי
                 </Link>
                 <button
                   onClick={handleLogout}

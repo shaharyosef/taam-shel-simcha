@@ -17,12 +17,10 @@ class User(Base):
     profile_image_url = Column(String, nullable=True)
     wants_emails = Column(Boolean, default=True)
 
-
     recipes = relationship("Recipe", back_populates="creator", cascade="all, delete")
-    favorites = relationship("Favorite", back_populates="user", cascade="all, delete")
-    ratings = relationship("Rating", back_populates="user")
-    comments = relationship("Comment", back_populates="user")
-
+    favorites = relationship("Favorite", back_populates="user", cascade="all, delete-orphan")
+    ratings = relationship("Rating", back_populates="user", cascade="all, delete-orphan")
+    comments = relationship("Comment", back_populates="user", cascade="all, delete-orphan")
 
 
 class Recipe(Base):
@@ -37,24 +35,22 @@ class Recipe(Base):
     video_url = Column(String)
     is_public = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-
     share_token = Column(String, unique=True, nullable=True, index=True)
 
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     creator = relationship("User", back_populates="recipes")
 
-    favorited_by = relationship("Favorite", back_populates="recipe")
-    ratings = relationship("Rating", back_populates="recipe")
-    comments = relationship("Comment", back_populates="recipe")
-
+    favorited_by = relationship("Favorite", back_populates="recipe", cascade="all, delete-orphan")
+    ratings = relationship("Rating", back_populates="recipe", cascade="all, delete-orphan")
+    comments = relationship("Comment", back_populates="recipe", cascade="all, delete-orphan")
 
 
 class Favorite(Base):
     __tablename__ = "favorites"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    recipe_id = Column(Integer, ForeignKey("recipes.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    recipe_id = Column(Integer, ForeignKey("recipes.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="favorites")
@@ -65,8 +61,8 @@ class Rating(Base):
     __tablename__ = "ratings"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    recipe_id = Column(Integer, ForeignKey("recipes.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    recipe_id = Column(Integer, ForeignKey("recipes.id", ondelete="CASCADE"), nullable=False)
     rating = Column(Integer, nullable=False)  # מ-1 עד 5
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -78,7 +74,6 @@ class Rating(Base):
     recipe = relationship("Recipe", back_populates="ratings")
 
 
-
 class Comment(Base):
     __tablename__ = "comments"
 
@@ -86,9 +81,8 @@ class Comment(Base):
     content = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    user_id = Column(Integer, ForeignKey("users.id"))
-    recipe_id = Column(Integer, ForeignKey("recipes.id"))
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    recipe_id = Column(Integer, ForeignKey("recipes.id", ondelete="CASCADE"), nullable=False)
 
     user = relationship("User", back_populates="comments")
     recipe = relationship("Recipe", back_populates="comments")
-

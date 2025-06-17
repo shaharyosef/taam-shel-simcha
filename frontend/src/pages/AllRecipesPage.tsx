@@ -66,33 +66,43 @@ export default function AllPublicRecipesPage() {
 
   return (
     <div className="p-4 text-right" dir="rtl">
-      {/* כפתור מיון */}
-      <div className="flex justify-start">
-        <div className="ml-auto relative">
-          <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="px-4 py-2 bg-primary text-white rounded shadow hover:bg-hover transition"
+      {/* כפתור הוספה + מיון */}
+      <div className="flex justify-start mb-4">
+        <div className="flex flex-row-reverse items-center gap-2">
+          <Link
+            to="/recipes/create"
+            className="bg-primary hover:bg-hover text-white px-4 py-2 rounded shadow transition text-sm font-semibold"
+
           >
-            מיין לפי ⏷
-          </button>
-          {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-10 text-right">
-              {SORT_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    setSort(option.value);
-                    setDropdownOpen(false);
-                  }}
-                  className={`block w-full px-4 py-2 text-sm hover:bg-gray-100 ${
-                    sort === option.value ? "font-bold text-primary" : ""
-                  }`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
+            ➕ הוסף מתכון
+          </Link>
+
+          <div className="relative">
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="px-4 py-2 bg-primary text-white rounded shadow hover:bg-hover transition text-sm"
+            >
+              מיין לפי ⏷
+            </button>
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow z-10 text-right">
+                {SORT_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      setSort(option.value);
+                      setDropdownOpen(false);
+                    }}
+                    className={`block w-full px-4 py-2 text-sm hover:bg-gray-100 ${
+                      sort === option.value ? "font-bold text-primary" : ""
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -106,11 +116,13 @@ export default function AllPublicRecipesPage() {
           >
             {/* דירוג ממוצע */}
             <div className="absolute top-2 right-2 bg-yellow-400 text-white px-2 py-1 rounded-md text-xs font-bold shadow">
-              ⭐ {recipe.average_rating != null ? recipe.average_rating.toFixed(1) : "אין דירוג"}
-
+              ⭐{" "}
+              {recipe.average_rating != null
+                ? recipe.average_rating.toFixed(1)
+                : "אין דירוג"}
             </div>
 
-            {/* כפתורי לב ושיתוף – מונעים ניווט בעת לחיצה */}
+            {/* כפתורי לב ושיתוף */}
             <div
               onClick={(e) => e.preventDefault()}
               className="absolute top-2 left-2 flex gap-2 items-center z-10"
@@ -125,7 +137,7 @@ export default function AllPublicRecipesPage() {
               <RecipeShareButton recipeId={recipe.id} title={recipe.title} />
             </div>
 
-            {/* דירוג על ידי המשתמש */}
+            {/* דירוג משתמש */}
             <div onClick={(e) => e.preventDefault()} className="mt-2">
               <StarRating
                 onRate={async (rating) => {
@@ -154,7 +166,9 @@ export default function AllPublicRecipesPage() {
             {/* פרטים */}
             <h3 className="text-lg font-bold mt-2">{recipe.title}</h3>
             <p className="text-sm text-gray-600">👨‍🍳 {recipe.creator_name}</p>
-            <p className="text-sm mt-1">📝 {recipe.description}</p>
+            <p className="text-sm mt-1 break-words whitespace-pre-wrap">
+              📝 {recipe.description}
+            </p>
           </Link>
         ))}
       </div>

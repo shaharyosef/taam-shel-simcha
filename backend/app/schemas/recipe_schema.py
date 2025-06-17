@@ -29,6 +29,7 @@ class RecipeResponse(BaseModel):
     share_token: UUID  # והוא מסוג UUID
     is_public: bool
     average_rating: Optional[float] = None
+    user_id: int
 
     
 
@@ -44,6 +45,7 @@ class RecipeUpdate(BaseModel):
     instructions: Optional[str] = None
     image_url: Optional[str] = None
     video_url: Optional[str] = None
+    is_public: Optional[bool] = None
 
     class Config:
         from_attributes = True

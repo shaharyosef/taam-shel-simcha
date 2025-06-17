@@ -37,7 +37,7 @@ export default function AiRecipePage() {
           disabled={loading}
           className="bg-primary text-white py-2 px-4 rounded hover:bg-hover w-full"
         >
-          {loading ? "יוצר מתכון..." : "צור מתכון"}
+          {loading ? "...יוצר מתכון" : "צור מתכון"}
         </button>
       </form>
 
