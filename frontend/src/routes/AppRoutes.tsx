@@ -17,6 +17,7 @@ import MyRecipesPage from "../pages/MyRecipesPage";
 import MyFavoritesPage from "../pages/MyFavoritesPage";
 import AdminDashboard from "../pages/AdminDashboard";
 import ProfilePage from "../pages/ProfilePage";
+import GuestRecipePage from "../pages/GuestRecipePage";
 
 export default function AppRoutes() {
   return (
@@ -30,6 +31,9 @@ export default function AppRoutes() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/guest-view/:id" element={<GuestRecipePage />} />
+
+
       </Route>
 
       {/* Protected user routes */}

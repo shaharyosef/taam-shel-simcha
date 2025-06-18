@@ -4,7 +4,10 @@ const api = axios.create({
   baseURL: "http://localhost:8000",
 });
 
-// שלב 1 – הוספת Authorization Header
+// נתיבים ציבוריים שלא צריך להעיף את המשתמש מהם אם אין טוקן
+const publicPaths = ["/guest", "/public", "/ai-recipe"];
+
+// ✅ שלב 1 – הוספת Authorization Header אם יש טוקן
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("token");
@@ -17,14 +20,19 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// שלב 2 – טיפול בשגיאה 401: העפת המשתמש לדף התחברות
+// ✅ שלב 2 – טיפול בשגיאה 401: הפניה ל־/login רק אם לא בדף ציבורי
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    const isGuestPage = publicPaths.some((prefix) =>
+      window.location.pathname.startsWith(prefix)
+    );
+
+    if (error.response?.status === 401 && !isGuestPage) {
       localStorage.removeItem("token");
-      window.location.href = "/login"; // ודא שזה הנתיב שלך
+      window.location.href = "/login";
     }
+
     return Promise.reject(error);
   }
 );
