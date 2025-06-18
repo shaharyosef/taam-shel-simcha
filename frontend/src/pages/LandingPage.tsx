@@ -13,7 +13,7 @@ export default function LandingPage() {
         />
         <h1 className="text-4xl md:text-5xl font-bold text-orange-800 mb-4">טעם של שמחה</h1>
         <p className="text-lg md:text-xl text-gray-700 max-w-2xl mb-10 leading-relaxed">
-          כי כל מתכון הוא גם זיכרון. זהו בית שבו כל אחד ואחת יכולים לשתף טעמים, רעיונות וסיפורים – וליצור קהילה של בישול מהלב.
+          כי כל מתכון הוא גם זיכרון. זהו בית שבו כל אחד ואחת יכולים לשתף טעמים, רעיונות וסיפורים – וליצור קהילה של בישול מהלב
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <Link to="/register" className="bg-orange-600 text-white px-6 py-3 rounded-xl shadow hover:bg-orange-700">
@@ -47,15 +47,15 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-orange-50 rounded-xl shadow p-6 border-t-4 border-orange-300">
               <h3 className="text-xl font-semibold mb-2">🧠  AI יצירת מתכון עם </h3>
-              <p>הזן רכיבים – קבל מתכון חדש מהלב ומהמוח של הבינה המלאכותית.</p>
+              <p>הזן רכיבים – קבל מתכון חדש מהלב ומהמוח של הבינה המלאכותית</p>
             </div>
             <div className="bg-orange-50 rounded-xl shadow p-6 border-t-4 border-orange-300">
               <h3 className="text-xl font-semibold mb-2">📚 מאגר מתכונים ציבוריים</h3>
-              <p>עיין, חפש, דרג ושתף מתכונים מהקהילה.</p>
+              <p>עיין, חפש, דרג ושתף מתכונים מהקהילה</p>
             </div>
             <div className="bg-orange-50 rounded-xl shadow p-6 border-t-4 border-orange-300">
               <h3 className="text-xl font-semibold mb-2">👩‍🍳 שתף את המתכון שלך</h3>
-              <p>העלה מתכון אישי עם תמונה, הוראות, מרכיבים – ושתף את הסיפור שמאחוריו.</p>
+              <p>העלה מתכון אישי עם תמונה, הוראות, מרכיבים – ושתף את הסיפור שמאחוריו</p>
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@ export default function LandingPage() {
       <section className="bg-orange-600 text-white py-16 px-6">
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">🍲 הצטרפו למסע הטעמים של שמחה</h2>
-          <p className="mb-6 text-lg">התחילו לשתף, לגלות ולהתאהב בבישול מהלב.</p>
+          <p className="mb-6 text-lg">התחילו לשתף, לגלות ולהתאהב בבישול מהלב</p>
           <Link to="/register" className="bg-white text-orange-700 px-6 py-3 rounded-xl shadow hover:bg-orange-100">
             התחילו עכשיו
           </Link>

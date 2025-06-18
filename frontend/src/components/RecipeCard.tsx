@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Heart, Star, ChefHat } from "lucide-react";
 import { type Recipe } from "../types/Recipe";
 import StarRating from "./StarRating";
@@ -22,9 +23,14 @@ export default function RecipeCard({
 }: RecipeCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const navigate = useNavigate();
 
   const handleCardClick = () => {
-    if (onClick) onClick();
+    if (onClick) {
+      onClick();
+    } else {
+      navigate(`/recipes/${recipe.id}`);
+    }
   };
 
   const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -44,7 +50,6 @@ export default function RecipeCard({
       className="group relative bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer overflow-visible border border-gray-100 hover:border-gray-200 h-full flex flex-col w-[300px]"
       dir="rtl"
     >
-      {/* כפתורי שיתוף ומועדפים */}
       <div className="absolute top-3 left-3 flex gap-2 z-50">
         <RecipeShareButton recipeId={recipe.id} title={recipe.title} />
         <button
@@ -63,7 +68,6 @@ export default function RecipeCard({
         </button>
       </div>
 
-      {/* תמונה */}
       <div className="relative h-48 flex-shrink-0 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
         {!imageError && recipe.image_url?.trim() ? (
           <img
@@ -82,7 +86,6 @@ export default function RecipeCard({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
-        {/* דירוג ממוצע */}
         {recipe.average_rating && recipe.average_rating > 0 && (
           <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow-md">
             <span className="text-sm font-semibold text-gray-800">
@@ -93,9 +96,7 @@ export default function RecipeCard({
         )}
       </div>
 
-      {/* תוכן */}
       <div className="p-4 flex-1 flex flex-col">
-        {/* כותרת ויוצר */}
         <div className="mb-3 min-h-[3.5rem]">
           <h3 className="font-bold text-lg text-gray-900 group-hover:text-orange-600 transition-colors duration-200 text-right leading-tight mb-1 line-clamp-2">
             {recipe.title}
@@ -104,18 +105,14 @@ export default function RecipeCard({
             <span className="truncate">{recipe.creator_name}</span>
             <ChefHat className="w-4 h-4 flex-shrink-0" />
           </div>
-
         </div>
 
-        {/* תיאור */}
         <div className="mb-3 min-h-[4rem] max-h-[6rem] overflow-y-auto pr-1 text-right">
-            <p className="text-sm text-gray-700 leading-relaxed break-words whitespace-pre-line">
-                {recipe.description || "אין תיאור זמין"}
-            </p>
+          <p className="text-sm text-gray-700 leading-relaxed break-words whitespace-pre-line">
+            {recipe.description || "אין תיאור זמין"}
+          </p>
         </div>
 
-
-        {/* דירוג אינטראקטיבי */}
         <div
           onClick={handleRateClick}
           className="pt-3 border-t border-gray-100 mt-auto"
@@ -134,7 +131,6 @@ export default function RecipeCard({
         </div>
       </div>
 
-      {/* אפקט מעבר רקע */}
       <div className="absolute inset-0 bg-gradient-to-t from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
     </div>
   );
