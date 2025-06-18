@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Recipe } from "../types/Recipe";
 import { getPublicRecipes } from "../services/recipeService";
+import { Star, ChefHat } from "lucide-react";
 
 export default function PublicRecipesPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -20,36 +21,52 @@ export default function PublicRecipesPage() {
 
   return (
     <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" dir="rtl">
-      {recipes.map((Recipe) => (
+      {recipes.map((recipe) => (
         <div
-          key={Recipe.id}
-          className="relative bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 text-right"
-          dir="rtl"
+          key={recipe.id}
+          className="group relative bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden border border-gray-100 hover:border-gray-200 flex flex-col w-[300px]"
         >
-          {/* דירוג בפינה הימנית העליונה */}
-          <div className="absolute top-2 right-2 bg-yellow-400 text-white px-2 py-1 rounded-md text-xs font-bold shadow">
-            {Recipe.average_rating != null ? Recipe.average_rating.toFixed(1) : "אין דירוג"}
+          {/* תמונה */}
+          <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+            {recipe.image_url?.trim() ? (
+              <img
+                src={recipe.image_url}
+                alt={recipe.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200">
+                <ChefHat className="w-16 h-16 text-orange-400" />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+
+            {/* דירוג ממוצע */}
+            {recipe.average_rating && (
+              <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow-md">
+                <span className="text-sm font-semibold text-gray-800">
+                  {recipe.average_rating.toFixed(1)}
+                </span>
+                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              </div>
+            )}
           </div>
 
-          {/* תמונה */}
-          <img
-            src={
-              Recipe.image_url && Recipe.image_url.trim() !== ""
-                ? Recipe.image_url
-                : "/images/no_pic.png"
-            }
-            alt={Recipe.title}
-            className="w-full h-48 object-contain object-center  rounded-t-2xl"
-          />
-
           {/* תוכן */}
-          <div className="p-4 space-y-2">
-            <h3 className="text-lg font-bold text-gray-800">{Recipe.title}</h3>
-            <p className="text-sm text-gray-500">🧑‍🍳 {Recipe.creator_name}</p>
+          <div className="p-4 flex-1 flex flex-col text-right">
+            <div className="mb-2 min-h-[3rem]">
+              <h3 className="font-bold text-lg text-gray-900 group-hover:text-orange-600 transition-colors duration-200 line-clamp-2">
+                {recipe.title}
+              </h3>
+              <div className="flex items-center justify-end gap-1.5 text-sm text-gray-600">
+                <span className="truncate">{recipe.creator_name}</span>
+                <ChefHat className="w-4 h-4 flex-shrink-0" />
+              </div>
+            </div>
 
-            {Recipe.description && (
-              <p className="text-sm text-gray-700 line-clamp-2">
-                📝{Recipe.description}
+            {recipe.description && (
+              <p className="text-sm text-gray-700 leading-relaxed line-clamp-2 mb-2">
+                📝 {recipe.description}
               </p>
             )}
           </div>

@@ -4,7 +4,7 @@ from app.db.database import get_db
 from app import models
 from app.models import User, Rating, Recipe
 from app.services.users import get_current_user, admin_required 
-from app.schemas.recipe_schema import RecipeAdminUpdate, ratingRequest, RecipeUpdate, RecipeResponse, RecipeCreate
+from app.schemas.recipe_schema import RecipeAdminUpdate, ratingRequest, RecipeUpdate, RecipeResponse, ShareRequest
 from sqlalchemy import func
 from fastapi import UploadFile, File
 from app.services.cloudinary_service import upload_image_to_cloudinary
@@ -508,17 +508,20 @@ def get_shared_recipe(token: str, db: Session = Depends(get_db)):
 
 @router.post("/share/send")
 def send_recipe_via_email(
-    recipe_id: int,
-    email: str,
+    data: ShareRequest,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
-    recipe = (db.query(Recipe).options(joinedload(Recipe.creator)).filter(Recipe.id == recipe_id, Recipe.is_public == True).first()
-)
+    recipe = (
+        db.query(Recipe)
+        .options(joinedload(Recipe.creator))
+        .filter(Recipe.id == data.recipe_id, Recipe.is_public == True)
+        .first()
+    )
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
 
-    background_tasks.add_task(send_recipe_email_with_pdf, email, recipe)
+    background_tasks.add_task(send_recipe_email_with_pdf, data.email, recipe)
     return {"message": "Email is being sent"}
 
 

@@ -33,7 +33,6 @@ export default function RecipeDetailsPage() {
         }
 
       } catch {
-        // אם המשתמש לא מחובר – ננסה רק כציבורי
         try {
           const publicRes = await api.get(`/recipes/public/${id}`);
           setRecipe(publicRes.data);
@@ -118,11 +117,33 @@ export default function RecipeDetailsPage() {
 
         <p className="text-sm text-gray-500 mb-6">📅 {formattedDate}</p>
 
-        <img
-          src={recipe.image_url?.trim() || "/images/no_pic.png"}
-          alt={recipe.title}
-          className="w-full max-h-[500px] object-contain rounded-xl mb-8 "
-        />
+        {/* ✅ תמונה עם object-contain ושמירה על יחס מקורי */}
+        <div className="bg-orange-100 rounded-xl overflow-hidden flex justify-center items-center mb-8 w-full h-[500px]">
+          {recipe.image_url?.trim() ? (
+            <img
+              src={recipe.image_url}
+              alt={recipe.title}
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-20 h-20 text-orange-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 2C8.13 2 5 5.13 5 9c0 1.11.3 2.14.82 3.03L6 15v3a2 2 0 002 2h8a2 2 0 002-2v-3l.18-.97A6.964 6.964 0 0019 9c0-3.87-3.13-7-7-7z"
+                />
+              </svg>
+            </div>
+          )}
+        </div>
 
         <button
           onClick={async () => {

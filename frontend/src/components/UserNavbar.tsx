@@ -59,8 +59,9 @@ export default function UserNavbar() {
             {dropdownOpen && (
               <div className="absolute left-0 mt-2 w-44 bg-white text-black border rounded shadow z-10 text-right">
                 <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">
-                  ✏️ עריכת פרופיל
+                  👤 הפרופיל שלי
                 </Link>
+                
                 <Link to="/recipes/mine" className="block px-4 py-2 hover:bg-gray-100">
                   🍲 המתכונים שלי
                 </Link>

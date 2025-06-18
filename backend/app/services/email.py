@@ -94,7 +94,7 @@ def generate_recipe_pdf(recipe) -> bytes:
     return pdf_bytes
 
 
-def send_recipe_email_with_pdf(to_email: str, recipe: dict):
+def send_recipe_email_with_pdf(to_email: str, recipe):
     pdf_bytes = generate_recipe_pdf(recipe)
 
     msg = EmailMessage()
@@ -112,7 +112,12 @@ def send_recipe_email_with_pdf(to_email: str, recipe: dict):
 צוות טעם של שמחה 💛
 """)
 
-    msg.add_attachment(pdf_bytes, maintype='application', subtype='pdf', filename=f"{recipe.title}.pdf")
+    msg.add_attachment(
+        pdf_bytes,
+        maintype='application',
+        subtype='pdf',
+        filename=f"{recipe.title}.pdf"
+    )
 
     try:
         with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as smtp:
@@ -122,6 +127,7 @@ def send_recipe_email_with_pdf(to_email: str, recipe: dict):
             print("✅ PDF נשלח במייל בהצלחה!")
     except Exception as e:
         print("❌ שגיאה בשליחת מתכון במייל:", e)
+
 
 
 def send_rating_notification_email(to_email: str, recipe_title: str, rating: int):

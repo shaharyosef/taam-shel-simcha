@@ -141,3 +141,12 @@ export async function searchRecipes(params: { title?: string; ingredient?: strin
   return response.data;
 }
 
+
+// recipeService.js
+export async function sendRecipeByEmail(recipeId: number, email: string) {
+  const response = await api.post("/recipes/share/send", {
+    recipe_id: recipeId,
+    email,
+  });
+  return response.data;
+}

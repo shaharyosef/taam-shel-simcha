@@ -8,7 +8,7 @@ import {
   searchRecipes,
 } from "../services/recipeService";
 import { Recipe } from "../types/Recipe";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RecipeCard from "../components/RecipeCard";
 
 const SORT_OPTIONS = [
@@ -29,6 +29,8 @@ export default function AllPublicRecipesPage() {
   const [searchTitle, setSearchTitle] = useState("");
   const [searchIngredient, setSearchIngredient] = useState("");
   const [searchCreator, setSearchCreator] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchFavorites() {
@@ -155,51 +157,50 @@ export default function AllPublicRecipesPage() {
 
       {/* 🔍 חיפוש מתקדם שמופיע רק אם showAdvancedSearch === true */}
       {showAdvancedSearch && (
-  <div className="flex justify-center mb-6">
-    <div className="bg-white border rounded-lg shadow p-4 w-full sm:w-[600px]">
-      <div className="grid grid-cols-1 gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="שם מתכון"
-          value={searchTitle}
-          onChange={(e) => setSearchTitle(e.target.value)}
-          className="border rounded p-2 w-full"
-        />
-        <input
-          type="text"
-          placeholder="רכיב"
-          value={searchIngredient}
-          onChange={(e) => setSearchIngredient(e.target.value)}
-          className="border rounded p-2 w-full"
-        />
-        <input
-          type="text"
-          placeholder="שם שף"
-          value={searchCreator}
-          onChange={(e) => setSearchCreator(e.target.value)}
-          className="border rounded p-2 w-full"
-        />
-      </div>
+        <div className="flex justify-center mb-6">
+          <div className="bg-white border rounded-lg shadow p-4 w-full sm:w-[600px]">
+            <div className="grid grid-cols-1 gap-2 mb-4">
+              <input
+                type="text"
+                placeholder="שם מתכון"
+                value={searchTitle}
+                onChange={(e) => setSearchTitle(e.target.value)}
+                className="border rounded p-2 w-full"
+              />
+              <input
+                type="text"
+                placeholder="רכיב"
+                value={searchIngredient}
+                onChange={(e) => setSearchIngredient(e.target.value)}
+                className="border rounded p-2 w-full"
+              />
+              <input
+                type="text"
+                placeholder="שם שף"
+                value={searchCreator}
+                onChange={(e) => setSearchCreator(e.target.value)}
+                className="border rounded p-2 w-full"
+              />
+            </div>
 
-      <div className="flex justify-between">
-        <button
-          onClick={handleSearch}
-          className="bg-primary text-white px-4 py-2 rounded hover:bg-hover transition text-sm"
-        >
-          🔍 חפש עכשיו
-        </button>
+            <div className="flex justify-between">
+              <button
+                onClick={handleSearch}
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-hover transition text-sm"
+              >
+                🔍 חפש עכשיו
+              </button>
 
-        <button
-          onClick={() => setShowAdvancedSearch(false)}
-          className="text-gray-500 hover:text-gray-700 text-sm"
-        >
-          סגור
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+              <button
+                onClick={() => setShowAdvancedSearch(false)}
+                className="text-gray-500 hover:text-gray-700 text-sm"
+              >
+                סגור
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 🧾 כרטיסי מתכונים */}
       {recipes.length === 0 ? (
@@ -220,6 +221,7 @@ export default function AllPublicRecipesPage() {
                   alert("שגיאה בשליחת הדירוג.");
                 }
               }}
+              onClick={() => navigate(`/recipes/${recipe.id}`)} // ✅ ניווט מתוקן
             />
           ))}
         </div>

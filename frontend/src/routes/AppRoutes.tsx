@@ -1,4 +1,3 @@
-// AppRoutes.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
@@ -17,6 +16,7 @@ import EditProfilePage from "../pages/EditProfilePage";
 import MyRecipesPage from "../pages/MyRecipesPage";
 import MyFavoritesPage from "../pages/MyFavoritesPage";
 import AdminDashboard from "../pages/AdminDashboard";
+import ProfilePage from "../pages/ProfilePage";
 
 export default function AppRoutes() {
   return (
@@ -44,8 +44,9 @@ export default function AppRoutes() {
         <Route path="/recipes/ai" element={<AiRecipePage />} />
         <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
         <Route path="/recipes/:id/edit" element={<EditRecipePage />} />
-        <Route path="/recipes/create" element={<RequireAuth><CreateRecipePage /></RequireAuth>} />
-        <Route path="/profile" element={<EditProfilePage/>} />
+        <Route path="/recipes/create" element={<CreateRecipePage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/edit-profile" element={<EditProfilePage />} />
         <Route path="/recipes/mine" element={<MyRecipesPage />} />
         <Route path="/favorites" element={<MyFavoritesPage />} />
         <Route path="/admin" element={<AdminDashboard />} />

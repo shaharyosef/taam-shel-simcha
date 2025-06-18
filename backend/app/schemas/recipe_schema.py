@@ -62,3 +62,8 @@ class RecipeAdminUpdate(BaseModel):
 
 class ratingRequest(BaseModel):
     rating: int = Field(...,ge=1, le =5, description= "Rate from 1-5")
+
+
+class ShareRequest(BaseModel):
+    recipe_id: int
+    email: str
