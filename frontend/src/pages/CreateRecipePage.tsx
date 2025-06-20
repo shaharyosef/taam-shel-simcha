@@ -123,7 +123,7 @@ export default function CreateRecipePage() {
             id="difficulty"
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
-            className="w-full p-3 border rounded-lg shadow-sm bg-white"
+            className="w-full p-3 pr-10 border rounded-lg shadow-sm bg-white appearance-none"
             required
           >
             <option value="קל">קל</option>
