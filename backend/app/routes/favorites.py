@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models import Favorite, Recipe, User
-from app.services.users import get_current_user
+from app.services import users_services
 from app.schemas.recipe_schema import RecipeResponse
 
 router = APIRouter(prefix="/favorites", tags=["favorites"])
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/favorites", tags=["favorites"])
 def add_favorite(
     recipe_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(users_services.get_current_user)
 ):
     # נבדוק אם המתכון קיים
     recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
@@ -38,7 +38,7 @@ def add_favorite(
 @router.get("/", response_model=list[RecipeResponse])
 def get_favorites(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(users_services.get_current_user)
 ):
     favorites = db.query(Favorite).filter(Favorite.user_id == current_user.id).all()
 
@@ -71,7 +71,7 @@ def get_favorites(
 def remove_favorite(
     recipe_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(users_services.get_current_user)
 ):
     Recipe = db.query(Favorite).filter(Favorite.user_id == current_user.id, Favorite.recipe_id == recipe_id).first()
     if not Recipe:

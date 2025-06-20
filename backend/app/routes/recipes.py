@@ -1,17 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends, Query, Form, BackgroundTasks
-from sqlalchemy.orm import Session, joinedload
+from fastapi import APIRouter, Depends, Query, Form, BackgroundTasks
+from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app import models
-from app.models import User, Rating, Recipe
-from app.services.users import get_current_user, admin_required 
+from app.models import User
+from app.services.users_services import get_current_user, admin_required 
 from app.schemas.recipe_schema import RecipeAdminUpdate, ratingRequest, RecipeUpdate, RecipeResponse, ShareRequest, DifficultyLevel
-from sqlalchemy import func
 from fastapi import UploadFile, File
-from app.services.cloudinary_service import upload_image_to_cloudinary
 from typing import Optional
-from app.services.email import send_recipe_email_with_pdf, send_rating_notification_email
 from app.services import recipe_services
-import random
+
 
 PAGE_SIZE = 8
 

@@ -3,12 +3,12 @@ from sqlalchemy.orm import Session, joinedload
 from app.db.database import get_db
 from app.models import Comment, Recipe, User
 from app.schemas.comment_schema import CommentCreate, CommentResponse
-from app.services.users import get_current_user
+from app.services import users_services
 
 router = APIRouter(prefix="/comments", tags=["comments"])
 
 @router.post("/{recipe_id}", response_model=CommentResponse)
-def add_comment(recipe_id: int, comment: CommentCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def add_comment(recipe_id: int, comment: CommentCreate, db: Session = Depends(get_db), current_user: User = Depends(users_services.get_current_user)):
     recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
@@ -57,7 +57,7 @@ def get_comments(recipe_id: int, db: Session = Depends(get_db)):
 def delete_comment(
     comment_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(users_services.get_current_user)
 ):
     comment = db.query(Comment).filter(Comment.id == comment_id).first()
     if not comment:
