@@ -71,7 +71,7 @@ export default function GuestRecipePage() {
           </div>
         </div>
 
-        <p className="text-sm text-gray-600 mb-2">👨‍🍳 {recipe.creator_name}</p>
+        <p className="text-sm text-gray-600 mb-2" >👨‍🍳 {recipe.creator_name}</p>
         <p className="text-sm text-gray-500 mb-6">📅 {formattedDate}</p>
 
         <div className="bg-orange-100 rounded-xl overflow-hidden flex justify-center items-center mb-8 w-full h-[500px]">

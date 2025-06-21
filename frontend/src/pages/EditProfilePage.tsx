@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api from "..//services/api";
 
 export default function EditProfilePage() {
   const [formData, setFormData] = useState({
@@ -101,15 +101,17 @@ export default function EditProfilePage() {
 
         <div className="flex items-center justify-end flex-row-reverse gap-2 mt-2">
           <input
-            type="checkbox"
+            className="w-5 h-5 text-primary border-gray-300 rounded"
             name="wants_emails"
+            type="checkbox"
+            id="wants_emails"
             checked={formData.wants_emails}
             onChange={handleChange}
-            className="w-5 h-5 text-primary border-gray-300 rounded"
           />
-          <label className="text-sm text-gray-700">לקבל עדכונים למייל</label>
+            <label htmlFor="wants_emails" className="text-sm text-gray-700">
+              לקבל עדכונים למייל
+            </label>
         </div>
-
         <button
           type="submit"
           disabled={loading}
