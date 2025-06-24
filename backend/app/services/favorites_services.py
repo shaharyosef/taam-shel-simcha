@@ -1,8 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import   HTTPException
 from sqlalchemy.orm import Session
-from app.db.database import get_db
 from app.models import Favorite, Recipe, User
-from app.services import users_services
 from app.schemas.recipe_schema import RecipeResponse
 
 

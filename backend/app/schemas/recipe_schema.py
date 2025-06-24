@@ -3,26 +3,26 @@ from typing import Optional
 from uuid import UUID
 from enum import Enum
 
-# 🆕 רמות קושי (גלילה בפרונט)
+
 class DifficultyLevel(str, Enum):
     קל = "קל"
     בינוני = "בינוני"
     קשה = "קשה"
 
-# Schema להוספת מתכון
+
 class RecipeCreate(BaseModel):
     title: str
     description: Optional[str] = None
-    ingredients: str  # יכול להיות JSON או טקסט
+    ingredients: str  
     instructions: Optional[str] = None
     image_url: Optional[str] = None
     video_url: Optional[str] = None
     is_public: bool = True
-    difficulty: DifficultyLevel  # 🆕 חובה לבחור רמת קושי
+    difficulty: DifficultyLevel  
     prep_time: str
 
     class Config:
-        orm_mode = True  # זה מאפשר לפיאדיקט לעבוד עם SQLAlchemy
+        orm_mode = True  
 
 class RecipeResponse(BaseModel):
     id: int
@@ -33,12 +33,12 @@ class RecipeResponse(BaseModel):
     image_url: Optional[str] = None
     video_url: Optional[str] = None
     created_at: Optional[str] = None
-    creator_name: str  # 🟢 שם המפרסם – חובה
-    share_token: UUID  # והוא מסוג UUID
+    creator_name: str  
+    share_token: UUID  
     is_public: bool
     average_rating: Optional[float] = None
     user_id: int
-    difficulty: DifficultyLevel  # 🆕 נוספה להצגה
+    difficulty: DifficultyLevel  
     prep_time: str
 
     class Config:
@@ -55,7 +55,7 @@ class RecipeUpdate(BaseModel):
     image_url: Optional[str] = None
     video_url: Optional[str] = None
     is_public: Optional[bool] = None
-    difficulty: Optional[DifficultyLevel] = None  # 🆕 גם בעדכון
+    difficulty: Optional[DifficultyLevel] = None  
     prep_time: Optional[str] = None
 
     class Config:

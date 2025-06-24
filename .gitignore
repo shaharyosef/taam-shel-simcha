@@ -1,4 +1,4 @@
-# === Python / FastAPI ===
+
 __pycache__/
 *.py[cod]
 *.log
@@ -7,7 +7,7 @@ __pycache__/
 .mypy_cache/
 *.egg-info/
 
-# .env files (סיסמאות, API keys וכו')
+
 .env
 .env.*
 **/.env
@@ -15,11 +15,11 @@ __pycache__/
 backend/.env
 ai_recipe/.env
 
-# === IDE/editor config ===
+
 .vscode/
 .idea/
 
-# === Node / React ===
+
 node_modules/
 build/
 dist/
@@ -27,29 +27,29 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-# === Docker related ===
+
 *.pid
 docker-compose.override.yml
 
-# === OS-generated files ===
+
 .DS_Store
 Thumbs.db
 
-# === Git merge/backup files ===
+
 *.orig
 *.swp
 
-# === Test/coverage output ===
+
 .coverage
 htmlcov/
 coverage.xml
 pytest_cache/
 .cache/
 
-# === Optional: קבצים שהועלו באופן זמני (תמונות, קבצים אישיים) ===
+
 uploads/
 media/
 
-# === React Native (אם תעבור בעתיד) ===
+
 *.expo/
 *.expo-shared/

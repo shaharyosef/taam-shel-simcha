@@ -107,7 +107,7 @@ export default function EditRecipePage() {
           className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-black"
         />
 
-        {/* צ'קבוקס בעיצוב ימין–שמאל */}
+      
         <div className="flex items-center justify-end flex-row-reverse gap-2 mt-2">
           <input
             type="checkbox"

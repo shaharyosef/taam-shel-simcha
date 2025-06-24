@@ -48,7 +48,7 @@ export default function AllPublicRecipesPage() {
   }, []);
 
   useEffect(() => {
-    setPage(1); // 🆕 חזרה לעמוד הראשון כאשר סוג המיון משתנה
+    setPage(1); // 
   }, [sort]);
 
   useEffect(() => {

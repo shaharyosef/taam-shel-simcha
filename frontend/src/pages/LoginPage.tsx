@@ -22,7 +22,7 @@ export default function LoginPage() {
 
       localStorage.setItem("token", data.access_token);
       alert("התחברת בהצלחה!");
-      navigate("/recipes"); // ✅ הפנייה אחרי התחברות
+      navigate("/recipes"); 
     } catch (err: any) {
       alert(err.message);
     }

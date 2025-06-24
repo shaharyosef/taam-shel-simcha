@@ -11,7 +11,7 @@ from weasyprint import HTML
 # טוען משתני סביבה מהקובץ .env
 load_dotenv()
 
-# משתני סביבה מהמייל
+
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")

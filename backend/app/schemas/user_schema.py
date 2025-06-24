@@ -45,10 +45,10 @@ class UserResponse(BaseModel):
     is_admin: bool
     created_at: datetime
     wants_emails: bool
-    profile_image_url: Optional[str] = None  # ✅ הוספת שדה חסר
-    is_admin: bool   # ✅ הוספת שדה חסר
+    profile_image_url: Optional[str] = None  
+    is_admin: bool   # 
 
     class Config:
-        from_attributes = True  # ✅ חובה!
+        from_attributes = True  
 
 

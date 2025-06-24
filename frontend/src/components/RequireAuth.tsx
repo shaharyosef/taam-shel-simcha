@@ -28,7 +28,7 @@ const RequireAuth = ({ children }: Props) => {
       console.log("⚠️ Token invalid:", err);
       setIsValid(false);
     }
-  }, [localStorage.getItem("token")]); // ננטר שינויים בטוקן
+  }, [localStorage.getItem("token")]); 
 
   if (isValid === null) {
     return <div className="p-6 text-center text-gray-400">בודק הרשאות...</div>;

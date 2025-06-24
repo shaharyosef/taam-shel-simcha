@@ -3,7 +3,7 @@ export const shadcnPluginConfig = {
   framework: "react",
   style: "default",
   tailwind: {
-    config: "tailwind.config.cjs", // או js אם לא שינית
+    config: "tailwind.config.cjs", 
     css: "src/index.css",
     baseColor: "primary",
     cssVariables: true

@@ -2,12 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import logo from "../assets/savtaicon.png";
-import { User } from "../types/user";  // טיפוס שהגדרת
+import { User } from "../types/user"; 
 
 export default function UserNavbar() {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);  // 👈 השינוי הקריטי
+  const [currentUser, setCurrentUser] = useState<User | null>(null);  
 
   const handleLogout = () => {
     localStorage.removeItem("token");

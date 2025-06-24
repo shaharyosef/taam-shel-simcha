@@ -11,7 +11,7 @@ class CommentResponse(BaseModel):
     created_at: datetime
     user_id: int
     recipe_id: int
-    username: str  # נציג גם את שם המשתמש שכתב את התגובה
+    username: str  
 
     class Config:
         orm_mode = True
