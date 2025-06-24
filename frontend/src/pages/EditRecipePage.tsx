@@ -16,6 +16,8 @@ export default function EditRecipePage() {
     is_public: true,
   });
 
+  const [uploading, setUploading] = useState(false);
+
   useEffect(() => {
     async function fetchRecipe() {
       try {
@@ -32,12 +34,34 @@ export default function EditRecipePage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
-
     if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
       setForm((prev) => ({ ...prev, [name]: checked }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "your_upload_preset"); // 👈 שנה לערך שלך
+    setUploading(true);
+
+    try {
+      const res = await fetch("https://api.cloudinary.com/v1_1/your_cloud_name/image/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      setForm((prev) => ({ ...prev, image_url: data.secure_url }));
+    } catch {
+      alert("שגיאה בהעלאת תמונה");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -64,7 +88,7 @@ export default function EditRecipePage() {
           placeholder="שם המתכון"
           value={form.title || ""}
           onChange={handleChange}
-          className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-black"
+          className="w-full p-3 border rounded-lg shadow-sm"
         />
 
         <textarea
@@ -72,7 +96,7 @@ export default function EditRecipePage() {
           placeholder="תיאור קצר"
           value={form.description || ""}
           onChange={handleChange}
-          className="w-full p-3 border rounded-lg shadow-sm h-16 focus:outline-none focus:ring focus:border-black"
+          className="w-full p-3 border rounded-lg shadow-sm h-16"
         />
 
         <textarea
@@ -80,7 +104,7 @@ export default function EditRecipePage() {
           placeholder="רכיבים (שורה או פסיק לכל רכיב)"
           value={form.ingredients || ""}
           onChange={handleChange}
-          className="w-full p-3 border rounded-lg shadow-sm h-20 focus:outline-none focus:ring focus:border-black"
+          className="w-full p-3 border rounded-lg shadow-sm h-20"
         />
 
         <textarea
@@ -88,33 +112,43 @@ export default function EditRecipePage() {
           placeholder="הוראות הכנה"
           value={form.instructions || ""}
           onChange={handleChange}
-          className="w-full p-3 border rounded-lg shadow-sm h-28 focus:outline-none focus:ring focus:border-black"
+          className="w-full p-3 border rounded-lg shadow-sm h-28"
         />
 
-        <input
-          name="image_url"
-          placeholder="קישור לתמונה"
-          value={form.image_url || ""}
-          onChange={handleChange}
-          className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-black"
-        />
+        {/* העלאת קובץ תמונה */}
+        <div>
+          <label className="block text-sm font-medium mb-1">העלאת תמונה:</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="w-full p-2 border rounded-md"
+          />
+          {uploading && <p className="text-sm mt-1">⏳ מעלה תמונה...</p>}
+          {form.image_url && (
+            <img
+              src={form.image_url}
+              alt="תצוגת תמונה"
+              className="mt-2 rounded-lg shadow-md max-h-48"
+            />
+          )}
+        </div>
 
         <input
           name="video_url"
           placeholder="קישור לסרטון הכנה"
           value={form.video_url || ""}
           onChange={handleChange}
-          className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-black"
+          className="w-full p-3 border rounded-lg shadow-sm"
         />
 
-      
-        <div className="flex items-center justify-end flex-row-reverse gap-2 mt-2">
+        <div className="flex items-center justify-end gap-2 mt-2">
           <input
             type="checkbox"
             name="is_public"
             checked={form.is_public ?? true}
             onChange={handleChange}
-            className="w-5 h-5 text-black focus:ring-black border-gray-300 rounded"
+            className="w-5 h-5"
           />
           <label className="text-sm font-medium text-gray-700">
             הצג כמתכון ציבורי
@@ -123,7 +157,7 @@ export default function EditRecipePage() {
 
         <button
           type="submit"
-          className="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition"
+          className="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 rounded-lg"
         >
           שמור שינויים
         </button>

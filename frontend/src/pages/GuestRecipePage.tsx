@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../services/api";
 import { Recipe } from "../types/Recipe";
+import YouTubePlayer from "../components/YouTubePlayer";
+
 
 export default function GuestRecipePage() {
   const { id } = useParams();
@@ -33,6 +35,13 @@ export default function GuestRecipePage() {
       })
     : "";
 
+
+    function extractYouTubeId(url: string) {
+    const match = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&\n?#]+)/);
+    return match ? match[1] : "";
+    }
+
+    
   const difficultyColor = {
     Easy: "bg-green-100 text-green-800",
     Medium: "bg-yellow-100 text-yellow-800",
@@ -111,14 +120,7 @@ export default function GuestRecipePage() {
         {recipe.video_url && (
           <div className="mb-10">
             <h2 className="text-xl font-semibold mb-3 text-primary">🎬 סרטון הכנה</h2>
-            <a
-              href={recipe.video_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block text-blue-600 underline"
-            >
-              לצפייה בסרטון
-            </a>
+            <YouTubePlayer videoId={extractYouTubeId(recipe.video_url)} />
           </div>
         )}
       </div>

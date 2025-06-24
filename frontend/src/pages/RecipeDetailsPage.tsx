@@ -10,6 +10,7 @@ import {
 import CommentsSection from "../components/CommentsSection";
 import StarRating from "../components/StarRating";
 import api from "../services/api";
+import YouTubePlayer from "../components/YouTubePlayer";
 
 export default function RecipeDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -55,7 +56,14 @@ export default function RecipeDetailsPage() {
     checkFavorite();
   }, [recipe]);
 
+  const extractVideoId = (url: string): string => {
+    const match = url.match(/(?:v=|youtu\.be\/|embed\/)([^&\n?#]+)/);
+    return match ? match[1] : "";
+  };
+
   if (!recipe) return <div className="p-6 text-white">טוען מתכון...</div>;
+  console.log("🎥 video_url:", recipe.video_url);
+
 
   const ingredients = recipe.ingredients?.split(/[\n,]+/).map((item) => item.trim()).filter(Boolean);
   const instructions = recipe.instructions?.split("\n").filter(Boolean);
@@ -124,12 +132,9 @@ export default function RecipeDetailsPage() {
               🎯 רמת קושי: {difficultyText}
             </div>
           )}
-
           <div className="inline-block font-semibold px-4 py-1 rounded-full text-sm bg-yellow-100 text-yellow-700">
             ⭐ {recipe.average_rating != null ? recipe.average_rating.toFixed(1) : "אין דירוג"}
           </div>
-
-
           {recipe.prep_time && (
             <div className="inline-block font-semibold px-4 py-1 rounded-full text-sm bg-purple-100 text-purple-800">
               🕒 {recipe.prep_time} דק'
@@ -208,6 +213,15 @@ export default function RecipeDetailsPage() {
             <p className="text-gray-500">לא צוינו הוראות</p>
           )}
         </div>
+
+        {recipe.video_url?.trim() && extractVideoId(recipe.video_url) && (
+          <div className="mb-10 w-full flex justify-center">
+            <div className="w-full max-w-4xl">
+              <h2 className="text-xl font-semibold mb-3 text-primary">🎬 סרטון הכנה</h2>
+              <YouTubePlayer videoId={extractVideoId(recipe.video_url)} />
+            </div>
+          </div>
+        )}
 
         <div className="mt-12 border-t border-gray-200 pt-8">
           <h2 className="text-2xl font-bold mb-6 text-primary">💬 תגובות</h2>
