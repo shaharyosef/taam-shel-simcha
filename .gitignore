@@ -12,6 +12,8 @@ __pycache__/
 .env.*
 **/.env
 **/.env.*
+backend/.env
+ai_recipe/.env
 
 # === IDE/editor config ===
 .vscode/
