@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from app.services import users_services
 load_dotenv()
 
-frontend_url = os.getenv("FRONTEND_URL")
+
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
