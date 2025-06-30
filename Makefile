@@ -75,3 +75,36 @@ restart:
 # 🔍 צפייה בלוגים של שירות: make logs SERVICE=backend
 logs:
 	docker-compose logs -f $(SERVICE)
+
+
+
+
+# Makefile להרצת הפרויקט באופן לוקאלי
+
+.PHONY: run-local run-backend run-frontend run-db stop-backend stop-frontend
+
+# 🐍 Backend
+run-backend:
+	cd backend && uvicorn app.main:app --reload
+
+# 🌐 Frontend
+run-frontend:
+	cd frontend && npm run dev
+
+# 🐘 Database (WSL)
+run-db:
+	sudo service postgresql start
+
+# 🚀 הכל יחד
+run-local:
+	@echo "🚀 Starting full local environment..."
+	@$(MAKE) -j 3 run-db run-backend run-frontend
+
+# 🛑 עצירת backend (ידני בינתיים)
+stop-backend:
+	pkill -f "uvicorn"
+
+# 🛑 עצירת frontend (ידני בינתיים)
+stop-frontend:
+	pkill -f "vite"
+
