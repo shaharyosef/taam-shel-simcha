@@ -55,6 +55,6 @@ media/
 *.expo-shared/
 
 
-!env.example
-!backend/env.example
-!ai_recipe/env.example
+!.env.example
+!backend/.env.example
+!ai_recipe/.env.example
