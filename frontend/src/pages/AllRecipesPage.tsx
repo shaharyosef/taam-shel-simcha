@@ -254,7 +254,7 @@ export default function AllPublicRecipesPage() {
           )}
           <a
               href="mailto:taam.shel.simcha@gmail.com"
-              className="fixed bottom-6 right-6 flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition z-50" 
+              className="fixed bottom-6 left-6 flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition z-50" 
               title="לחץ כאן לפנות אלינו במייל"
                   >
               <span className="hidden sm:inline text-sm font-semibold">צריכים עזרה❓</span>
