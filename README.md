@@ -51,7 +51,7 @@
 
 ## 🎥 Live Demo
 
-[![צפה בדמו ביוטיוב](https://youtu.be/nNwFVbXwC1U)](https://youtu.be/nNwFVbXwC1U)
+[![צפה בדמו ביוטיוב] (https://img.youtube.com/vi/nNwFVbXwC1U/0.jpg)](https://youtu.be/nNwFVbXwC1U)
 
 > 🎬 This short demo showcases the full flow of the app — from registration to adding, rating, sharing, and commenting on recipes.
 
