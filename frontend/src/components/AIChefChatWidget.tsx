@@ -9,7 +9,7 @@ export default function AIChefChatWidget() {
   const [loading, setLoading] = useState(false);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: "assistant", content: "?היי 😊  איזה מה בא לך לבשל היום"},
+    { role: "assistant", content: "היי 😊  איזה מה בא לך לבשל היום?"},
   ]);
 
   const bodyRef = useRef<HTMLDivElement | null>(null);
@@ -70,13 +70,13 @@ export default function AIChefChatWidget() {
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 px-3 py-3">
-          <div className="flex items-center gap-2">
+          <div dir="rtl" className="flex flex-row-reverse items-center gap-2 text-right">
             <div className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/10 text-xs font-bold">
               AI
             </div>
             <div className="leading-tight">
-              <div className="text-sm font-semibold">השף הפרטי</div>
-              <div className="text-xs text-white/60">שף פרטי לבישול ביתי</div>
+              <div className="text-sm font-semibold" dir="rtl">השף הפרטי</div>
+              <div className="text-xs text-white/60" dir="rtl">שף פרטי לבישול ביתי</div>
             </div>
           </div>
 
@@ -130,7 +130,7 @@ export default function AIChefChatWidget() {
               onKeyDown={onKeyDown}
               disabled={loading}
               rows={1}
-              placeholder="(Enter לשליחה, Shift+Enter לשורה חדשה) ...כתב/י כאן"
+              placeholder={`כתב/י כאן מה מתחשק לך\n(Enter לשליחה · Shift+Enter לשורה חדשה)`}
               className={[
                 "flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-3 py-2",
                 "text-sm text-white placeholder:text-white/40 outline-none",
