@@ -55,6 +55,16 @@
 
 > 🎬 This short demo showcases the full flow of the app — from registration to adding, rating, sharing, and commenting on recipes.
 
+### 🤖 AI Chef Chatbot – Live Demo
+
+[![Watch ChatBot demo on YouTube](https://img.youtube.com/vi/6h97hw4JnTo/maxresdefault.jpg)](https://youtu.be/6h97hw4JnTo)
+
+> 🎬 This demo showcases the AI-powered chef chatbot in action.  
+> The chatbot engages in a natural conversation with the user, understands preferences such as cuisine style, time, and dietary restrictions,  
+> and then generates a complete, realistic home-style recipe — all through an intuitive chat experience.
+
+
+
 ---
 
 ## 🚀 Tech Stack
