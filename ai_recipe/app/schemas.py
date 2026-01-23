@@ -21,7 +21,7 @@ class ChatRecipeRequest(BaseModel):
     messages: List[ChatMessage] = Field(min_length=1, max_length=500)
 
 class ChatRecipeResponse(BaseModel):
-    type: Literal["question", "recipe"]
+    type: Literal["question", "confirm", "recipe"]
     done: bool
     reply: str
     title: Optional[str] = None

@@ -94,7 +94,7 @@ Additional rules:
    
 
 
-TYPE_RE = re.compile(r"\[\[TYPE:(QUESTION|RECIPE)\]\]\s*$", re.IGNORECASE)
+TYPE_RE = re.compile(r"\[\[TYPE:(QUESTION|CONFIRM|RECIPE)\]\]\s*$", re.IGNORECASE)
 
 CHATBOT_SYSTEM_PROMPT = """
 You are a warm, professional AI culinary concierge for a home-cooking website called "טעם של שמחה".
@@ -136,10 +136,20 @@ Defaults (if not specified):
 - Difficulty: easy
 - Spice level: mild
 
-When to ask questions:
-- At the beginning, it is OK and encouraged to ask 1–2 short clarifying questions.
-- If the user gave a very broad request, start with the MOST important missing detail.
-- Prefer questions about style or time over technical details.
+CONFIRMATION STEP (VERY IMPORTANT):
+- You MUST NOT generate a recipe until the user explicitly approves the final summary.
+- When you have enough information, you must send a short summary for approval (not a recipe).
+- The summary must include the key choices (meal type, style, time, important dislikes/restrictions if any).
+- Then ask ONE short question: ask the user to approve or to edit.
+- Do not ask "האם זה בסדר אם אני מסכם" — when ready, simply provide the summary for approval.
+- If the user changes their mind or asks for a different dish, you must repeat the confirmation step again.
+- Even if the user agrees to a suggested dish idea (e.g., "אני בעד"), this is NOT final approval.
+- Final approval is only when the user says exactly "מאשר" or exactly "מאשרת", after a [[TYPE:CONFIRM]] summary.
+- This approval summary response must end with [[TYPE:CONFIRM]].
+
+Frontend button messages:
+- If the user says exactly "מאשר" or "מאשרת" — generate the full recipe now (and end with [[TYPE:RECIPE]]).
+- If the user says exactly "רוצה לערוך" — ask ONE focused clarifying question (and end with [[TYPE:QUESTION]]).
 
 When generating a recipe:
 - Generate ONE full recipe only.
@@ -165,14 +175,16 @@ Language enforcement:
 - Every part of the response MUST be written in correct, natural Hebrew.
 - If you accidentally generate a word in English, immediately replace it with proper Hebrew.
 
-
 IMPORTANT OUTPUT TAG RULE (for backend parsing):
 - If you are asking a question (and NOT providing a full recipe), append exactly:
   [[TYPE:QUESTION]]
+- If you are providing an approval summary (and NOT providing a full recipe), append exactly:
+  [[TYPE:CONFIRM]]
 - If you are providing a full recipe, append exactly:
   [[TYPE:RECIPE]]
 - Do not add any other tags or explanations.
 """.strip()
+
 
 
 def _extract_type_and_clean(text: str) -> Tuple[str, str]:
@@ -183,7 +195,13 @@ def _extract_type_and_clean(text: str) -> Tuple[str, str]:
 
     raw = m.group(1).upper()
     cleaned = TYPE_RE.sub("", text).strip()
-    return ("recipe" if raw == "RECIPE" else "question"), cleaned
+
+    if raw == "RECIPE":
+        return "recipe", cleaned
+    if raw == "CONFIRM":
+        return "confirm", cleaned
+    return "question", cleaned
+
 
 
 def _extract_title_if_recipe(cleaned_text: str, msg_type: str) -> Optional[str]:
@@ -231,8 +249,8 @@ def generate_chat_recipe_with_openai(messages: List[Dict[str, str]]) -> Dict[str
     title = _extract_title_if_recipe(cleaned, msg_type)
 
     return {
-        "type": msg_type,
-        "done": (msg_type == "recipe"),
-        "title": title,
-        "reply": cleaned
+    "type": msg_type,                 # "question" | "confirm" | "recipe"
+    "done": (msg_type == "recipe"),
+    "title": title,
+    "reply": cleaned
     }
