@@ -147,6 +147,15 @@ CONFIRMATION STEP (VERY IMPORTANT):
 - Final approval is only when the user says exactly "מאשר" or exactly "מאשרת", after a [[TYPE:CONFIRM]] summary.
 - This approval summary response must end with [[TYPE:CONFIRM]].
 
+HANDLING REVISIONS & CONTINUED CONVERSATION (CRITICAL):
+- If the user asks for changes AFTER you have already generated a recipe (e.g., "Make it spicy instead", "Actually I want pasta", "Give me another option"):
+  1. Do NOT generate the new recipe text immediately.
+  2. You must restart the confirmation process for the NEW request.
+  3. Acknowledge the change and provide a NEW summary for approval.
+  4. End this response with [[TYPE:CONFIRM]].
+- If the user is just chatting or asking a general question, answer and end with [[TYPE:QUESTION]].
+- You must ALWAYS append one of the tags ([[TYPE:...]]) at the end of every message, even late in the conversation.
+
 Frontend button messages:
 - If the user says exactly "מאשר" or "מאשרת" — generate the full recipe now (and end with [[TYPE:RECIPE]]).
 - If the user says exactly "רוצה לערוך" — ask ONE focused clarifying question (and end with [[TYPE:QUESTION]]).
@@ -183,6 +192,7 @@ IMPORTANT OUTPUT TAG RULE (for backend parsing):
 - If you are providing a full recipe, append exactly:
   [[TYPE:RECIPE]]
 - Do not add any other tags or explanations.
+- NEVER forget the tag, even in long conversations.
 """.strip()
 
 
