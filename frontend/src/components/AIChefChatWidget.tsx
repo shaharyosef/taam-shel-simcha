@@ -9,29 +9,19 @@ type RecipeModalData = {
   body: string;
 };
 
-function extractTitleFromReply(reply: string) {
-  // מנסה לקחת כותרת מהשורה הראשונה אם היא קצרה/הגיונית
-  const firstLine = (reply || "").split("\n").map(s => s.trim()).find(Boolean) || "";
-  if (firstLine && firstLine.length <= 80) return firstLine;
-  return "המתכון שלך";
-}
-
 export default function AIChefChatWidget() {
-  
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [lastType, setLastType] = useState<ReplyType>("question");
+  const [recipeModal, setRecipeModal] = useState<RecipeModalData | null>(null);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: "assistant", content: "היי 😊 איזה מה בא לך לבשל היום?" },
   ]);
 
-  // ✅ מודל מתכון
-  const [recipeModal, setRecipeModal] = useState<RecipeModalData | null>(null);
-
-  // ✅ ref להיסטוריה עדכנית
+  // ✅ תמיד מחזיק את ההיסטוריה הכי עדכנית (מונע “סטייט ישן”)
   const messagesRef = useRef<ChatMessage[]>(messages);
   useEffect(() => {
     messagesRef.current = messages;
@@ -45,18 +35,29 @@ export default function AIChefChatWidget() {
     [loading, input]
   );
 
+  const isConfirmMode = lastType === "confirm";
+
+  // גלילה אוטומטית למטה
   useEffect(() => {
     if (!open) return;
     const el = bodyRef.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
-  }, [open, messages, loading]);
+  }, [open, messages, loading, recipeModal]);
+
+  function normalizeType(t: unknown): ReplyType {
+    const normalized = String(t ?? "").trim().toLowerCase();
+    if (normalized === "confirm" || normalized === "recipe") {
+      return normalized as ReplyType;
+    }
+    return "question";
+  }
 
   async function sendText(text: string) {
     const clean = text.trim();
     if (!clean || loading) return;
 
-    // 1) מוסיפים את הודעת המשתמש מיד
+    // 1) מראים מיד את הודעת המשתמש
     const nextMessages: ChatMessage[] = [
       ...messagesRef.current,
       { role: "user", content: clean },
@@ -64,7 +65,7 @@ export default function AIChefChatWidget() {
     messagesRef.current = nextMessages;
     setMessages(nextMessages);
 
-    // 2) מאפסים קלט ומפעילים טעינה
+    // 2) מאפסים UI
     setInput("");
     setLoading(true);
 
@@ -72,15 +73,10 @@ export default function AIChefChatWidget() {
       const data = await chatAIRecipe(nextMessages);
       console.log("AI Chat Response:", data);
 
-      const normalizedType = String(data?.type ?? "").trim().toLowerCase();
-      const safeType: ReplyType =
-        normalizedType === "confirm" || normalizedType === "recipe"
-          ? (normalizedType as ReplyType)
-          : "question";
-
+      const safeType = normalizeType(data?.type);
       setLastType(safeType);
 
-      // 3) מוסיפים תשובת בוט לצ׳אט (תמיד)
+      // 3) מוסיפים תשובת בוט לצ'אט
       const afterBot: ChatMessage[] = [
         ...messagesRef.current,
         { role: "assistant", content: data.reply },
@@ -88,16 +84,16 @@ export default function AIChefChatWidget() {
       messagesRef.current = afterBot;
       setMessages(afterBot);
 
-      // 4) אם זה מתכון -> פותחים מודל
+      // 4) אם זה מתכון – פותחים גם מודאל גדול (והצ'אט נשאר פתוח)
       if (safeType === "recipe") {
-        const title = (data?.title && String(data.title).trim()) || extractTitleFromReply(data.reply);
         setRecipeModal({
-          title,
+          title: data.title || "המתכון שלך",
           body: data.reply,
         });
       }
     } catch (err) {
       console.error("AI Chat Error:", err);
+      setLastType("question");
 
       const afterErr: ChatMessage[] = [
         ...messagesRef.current,
@@ -105,8 +101,6 @@ export default function AIChefChatWidget() {
       ];
       messagesRef.current = afterErr;
       setMessages(afterErr);
-
-      setLastType("question");
     } finally {
       setLoading(false);
       requestAnimationFrame(() => inputRef.current?.focus());
@@ -122,11 +116,11 @@ export default function AIChefChatWidget() {
 
   return (
     <div className="fixed bottom-5 right-5 z-[9999]">
-      {/* ✅ MODAL - חייב להיות מרונדר פה */}
+      {/* ✅ Recipe Modal */}
       <RecipeModal
         open={!!recipeModal}
-        title={recipeModal?.title || ""}
-        body={recipeModal?.body || ""}
+        title={recipeModal?.title ?? ""}
+        body={recipeModal?.body ?? ""}
         onClose={() => setRecipeModal(null)}
       />
 
@@ -145,7 +139,10 @@ export default function AIChefChatWidget() {
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 px-3 py-3">
-          <div dir="rtl" className="flex flex-row-reverse items-center gap-2 text-right">
+          <div
+            dir="rtl"
+            className="flex flex-row-reverse items-center gap-2 text-right"
+          >
             <div className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/10 text-xs font-bold">
               AI
             </div>
@@ -175,7 +172,12 @@ export default function AIChefChatWidget() {
           className="h-[calc(520px-56px-64px)] overflow-y-auto px-3 py-3 space-y-2"
         >
           {messages.map((m, idx) => (
-            <div key={idx} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
+            <div
+              key={idx}
+              className={
+                m.role === "user" ? "flex justify-end" : "flex justify-start"
+              }
+            >
               <div
                 dir="rtl"
                 className={[
@@ -201,35 +203,65 @@ export default function AIChefChatWidget() {
 
         {/* Footer */}
         <div className="border-t border-white/10 px-3 py-3">
-          <div className="flex gap-2">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={onKeyDown}
-              disabled={loading}
-              rows={1}
-              placeholder={`כתב/י כאן מה מתחשק לך\n(Enter לשליחה · Shift+Enter לשורה חדשה)`}
-              className={[
-                "flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-3 py-2",
-                "text-sm text-white placeholder:text-white/40 outline-none",
-                "focus:border-white/20 focus:ring-2 focus:ring-white/10",
-                loading ? "opacity-70" : "",
-              ].join(" ")}
-            />
-            <button
-              onClick={() => sendText(input)}
-              disabled={!canSend}
-              className={[
-                "rounded-xl px-4 py-2 text-sm font-semibold transition",
-                canSend
-                  ? "bg-white text-zinc-900 hover:bg-white/90"
-                  : "bg-white/20 text-white/60 cursor-not-allowed",
-              ].join(" ")}
-            >
-              שלח
-            </button>
-          </div>
+          {isConfirmMode ? (
+            <div className="flex gap-2">
+              <button
+                onClick={() => sendText("מאשר")}
+                disabled={loading}
+                className={[
+                  "flex-1 rounded-xl px-4 py-2 text-sm font-semibold transition",
+                  loading
+                    ? "bg-white/20 text-white/60 cursor-not-allowed"
+                    : "bg-white text-zinc-900 hover:bg-white/90",
+                ].join(" ")}
+              >
+                מאשר
+              </button>
+
+              <button
+                onClick={() => sendText("רוצה לערוך")}
+                disabled={loading}
+                className={[
+                  "flex-1 rounded-xl px-4 py-2 text-sm font-semibold transition",
+                  loading
+                    ? "bg-white/20 text-white/60 cursor-not-allowed"
+                    : "bg-white/10 text-white border border-white/10 hover:bg-white/15",
+                ].join(" ")}
+              >
+                עריכה
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <textarea
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={onKeyDown}
+                disabled={loading}
+                rows={1}
+                placeholder={`כתב/י כאן מה מתחשק לך\n(Enter לשליחה · Shift+Enter לשורה חדשה)`}
+                className={[
+                  "flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-3 py-2",
+                  "text-sm text-white placeholder:text-white/40 outline-none",
+                  "focus:border-white/20 focus:ring-2 focus:ring-white/10",
+                  loading ? "opacity-70" : "",
+                ].join(" ")}
+              />
+              <button
+                onClick={() => sendText(input)}
+                disabled={!canSend}
+                className={[
+                  "rounded-xl px-4 py-2 text-sm font-semibold transition",
+                  canSend
+                    ? "bg-white text-zinc-900 hover:bg-white/90"
+                    : "bg-white/20 text-white/60 cursor-not-allowed",
+                ].join(" ")}
+              >
+                שלח
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
