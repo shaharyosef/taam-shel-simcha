@@ -4,7 +4,7 @@ import UserNavbar from "../components/UserNavbar";
 import AIChefChatWidget from "../components/AIChefChatWidget";
 
 export default function UserLayout() {
-  console.log("✅ UserLayout rendered");
+
   return (
     <>
       <UserNavbar />
